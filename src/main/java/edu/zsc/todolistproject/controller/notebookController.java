@@ -5,7 +5,9 @@ import org.springframework.stereotype.Controller;
 @Controller
 public class notebookController {
 
-    public String A() {
+    private String message = "AAAAAAAAAAAAAA";
+
+    public String AAAAAAAAAAAAAAAAA() {
         return super.toString();
 
     }
