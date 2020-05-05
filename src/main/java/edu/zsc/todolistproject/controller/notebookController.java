@@ -4,8 +4,9 @@ import org.springframework.stereotype.Controller;
 
 @Controller
 public class notebookController {
-    @Override
-    public String toString() {
+
+    public String A() {
         return super.toString();
+
     }
 }
