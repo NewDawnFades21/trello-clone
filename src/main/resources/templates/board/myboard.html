@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+	<link href="http://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+	<link type="text/css" rel="stylesheet" th:href="@{/css/materialize.min.css}"  media="screen,projection"/>
+  <link type="text/css" rel="stylesheet" th:href="@{/css/projectMain.css}"  media="screen,projection"/>
+</head>
+
+    <body>
+        <div id="header" class="z-depth-1">Trello</div>
+
+        <div id="my_board">My Boards</div>
+        <ul id="boards_list">
+	        <ul th:if="${boards.empty}">
+		       	 새로운 보드 만들어 할 일을 관리하세요!
+	        </ul>
+	       <ul th:each="board:${boards}" >
+	         <a th:href="@{'/boards/'+${board.boardId}}">
+	         <li th:text="${board.name}" class="board project_1 waves-effect waves-light btn"></li>
+	         </a>
+	       </ul>
+	       
+	       	<div class="add_project not_sortable" >
+	         <a class="btn-floating btn-large waves-effect waves-light red add_project_btn">
+	                <i class="material-icons">add</i>
+	          </a>
+	            <form class="add_project_form">
+	              <div class="input-field col s12">
+	                  <input id="add_project" type="text" class="validate">
+	                    <label for="list_name">Add a Project...</label></br>
+	                     <a class="waves-effect waves-light btn save blue-grey lighten-5">save</a>
+	                    <a class="waves-effect waves-light btn cancel blue-grey lighten-5">cancel</a>
+	              </div>
+	            </form>
+	        </div>
+        </ul>
+ 
+      <script type="text/javascript" src="lib/jquery-2.2.0.min.js"></script>
+      <script type="text/javascript" src="lib/materialize.min.js"></script>
+      <script type="text/javascript" src="js/index.js"></script>
+    </body>
+  </html>

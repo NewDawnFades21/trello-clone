@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+    <link href="webjars/bootstrap/4.4.1-1/css/bootstrap.min.css" rel="stylesheet">
+    <link th:href="@{/css/board_layout.css}" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+</head>
+<body>
+<div class="container-fluid">
+    <div class="row">
+        <div class="col-md-12">
+            <h1>jKanban</h1>
+            <hr>
+            <div id="myKanban"></div>
+            <button class="btn btn-success" id="addDefault">Add "Default" board</button>
+            <button class="btn btn-success" id="addToDo">Add element in "To Do" Board</button>
+            <button class="btn btn-danger" id="removeBoard">Remove "Done" Board</button>
+        </div>
+    </div>
+</div>
+
+<script src="webjars/jquery/3.5.0/jquery.min.js"></script>
+<script src="webjars/bootstrap/4.4.1-1/js/bootstrap.min.js"></script>
+<script th:src="@{/js/board.js}"></script>
+</body>
+</html>

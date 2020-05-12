@@ -10,6 +10,5 @@ public class Card {
     private String title;
     private String description;
     private String comment;
-    private TheList theList;
     private List<Checklist> checklists;
 }
