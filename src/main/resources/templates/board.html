@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<header th:replace="fragments/layout :: header"></header>
+<body>
+
+<div id="board_info">
+    <div class="project_name">[[${board.title}]]</div>
+</div>
+
+<div id="board_canvas" class="list_sortable">
+    <input name="userId" type="hidden" th:value="${user.id}" id="userId">
+    <div class="list_wrapper" th:each="deck:${board.decks}">
+        <div class="list_content z-depth-1">
+            <div class="list_header">
+                <input type="hidden" name="id" th:value="${deck.value.id}">
+                <input type="hidden" name="boardId" th:value="${board.id}">
+                <textarea class="list_header_name" placeholder="Input Deck Name"
+                          th:text="${deck.value.title}"></textarea>
+            </div>
+
+            <div class="list_cards">
+                <div class='list_card' th:each="cardMap:${deck.value.cards}">
+                    <div class='list_card_detail'>
+                        <a class='list_card_title modal-trigger modalLink' dir='auto'
+                           th:attr="cardId=${cardMap.key},userId=${user.id}" href='#modalLayer'>[[${cardMap.value.title}]]</a>
+                    </div>
+                </div>
+            </div>
+
+            <div class="card_composer">
+                <div class="add_card_form">
+                    <textarea class="list_card_composer_textarea" name="title"></textarea>
+                    <input name="deckId" type="hidden" th:value="${deck.key}">
+                    <a class="waves-effect  waves-light btn card_save blue-grey lighten-5">save</a>
+                    <a class="waves-effect waves-light btn card_cancel blue-grey lighten-5">cancel</a>
+                </div>
+                <a class="add_card" href="#">Add a Card...</a>
+            </div>
+
+        </div>
+    </div>
+
+    <div class="add_list not_sortable">
+        <a class="btn-floating btn-large waves-effect waves-light red">
+            <i class="material-icons">add</i>
+        </a>
+        <form class="add_list_form">
+            <div class="input-field col s12">
+                <input name="boardId" th:value="${board.id}" type="hidden">
+                <input id="add_list" type="text" class="validate" name="title">
+                <label for="list_name">Add a list...</label></br>
+                <a class="waves-effect waves-light btn save blue-grey lighten-5">save</a>
+                <a class="waves-effect waves-light btn cancel blue-grey lighten-5">cancel</a>
+            </div>
+        </form>
+    </div>
+
+</div>
+
+
+<!-- Modal Structure -->
+<div th:replace="fragments/modal :: modal(${user})"></div>
+<footer th:replace="fragments/layout :: footer"></footer>
+</body>
+</html>

@@ -1,9 +1,4 @@
-﻿
-$(document).ready(function () {
-    $.ajax({
-        url: "/ToDoes/BuildToDoTable",
-        success: function (result) {
-            $("#tableDiv").html(result);
-        }
-    });
+﻿$(document).on("click", ".add_checklist_btn", function () {
+    var url = '/todo/buildToDoTable';
+    $(".tableDiv").load(url);
 });

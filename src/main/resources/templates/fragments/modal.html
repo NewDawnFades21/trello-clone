@@ -1,0 +1,112 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head th:replace="fragments/layout :: header"></head>
+<body>
+<!-- Modal Structure -->
+<div id="modalLayer" class="z-depth-1 modal-body" th:fragment="modal(user)">
+    <div class="modal_content">
+        <p class="card_title_in_modal">
+            <input type="hidden" name="id" value="{{id}}">
+            <input type="text" class="validate" name="title" value="{{title}}">
+        </p>
+        <div class="list_name_wrapper">
+            <span class="in_list">in list</span>
+            <span class="list_name">{{list_name}}</span>
+        </div>
+        <p>Add comment</p>
+        <div class="comment_frame">
+            <input type="hidden" name="userId" th:value="${user.id}">
+            <textarea class="comment_contents z-depth-1" placeholder="Write a comment..."></textarea>
+        </div>
+        <div class="comment_send">Send</div>
+        </br>
+
+
+        <p>Activity</p>
+        <div class="comments" id="comments">
+            {{#Comments}}
+            <div class='comment'>
+                <div class='commenter'>{{user.username}}</div>
+                <div class='comment_contents z-depth-1'>{{content}}</div>
+                <div class='comment_date'>{{createTime}} -</div>
+                <div class='comment_reply'> Reply</div>
+            </div>
+            {{/Comments}}
+        </div>
+        <div id="checklists">
+            {{#Checklists}}
+            <div class="checklistDiv">
+                <p>{{title}}</p>
+                <div class='tableDiv' id="tablediv{{id}}">
+                </div>
+                <form class='toDoCreateForm'>
+                    <input type='hidden' name='checklistId' value='{{id}}'>
+                    <input type='hidden' name='cardId' value='{{cardId}}'>
+                    <input class='add_item'>
+                    <div class='invalid-feedback'></div>
+                </form>
+            </div>
+            {{/Checklists}}
+        </div>
+    </div>
+    <button type="button" class="close_button">X</button>
+
+    <div class="modal_sidebar">
+
+        <p>Add</p>
+        <div class="modal_sidebar_btn z-depth-1 members_btn">Members</div>
+
+        <div class="modal_for_members z-depth-1">
+            <div class="members_btn_header">Members</div>
+            <div class="search_member">
+                <input type="text" placeholder="Search members"/>
+            </div>
+        </div>
+
+        <div class="modal_sidebar_btn z-depth-1 due_date_btn"> Due Date</div>
+        <div class="modal_for_due_date z-depth-1">
+            <div class="due_date_btn_header">Change Due Date</div>
+            <form class="dpicker_widget">
+                <div class="datapicker_select_date">
+                    <label for="date">Date</label></br>
+                    <input id="date" class="datepicker datapicker_select_input" type="date" placeholder="17/6/2016"/>
+                </div>
+
+                <div class="datapicker_select_time">
+                    <label for="time">Time</label></br>
+                    <input id="time" class="datapicker_select_input" type="text" placeholder="12:00" tabindex="101"/>
+                </div>
+
+            </form>
+        </div>
+
+        <div class="modal_sidebar_btn z-depth-1 checklist_btn">Checklist</div>
+
+        <div class="modal_for_checklist z-depth-1">
+            <div class="checklist_btn_header">添加清单</div>
+            <form class="form">
+                <label for="checklist">清单名称</label><br>
+                <input type="text" name="title" placeholder="请输入清单名称" id="checklist"><br>
+
+                <div class="link_submit z-depth-1 add_checklist_btn">添加</div>
+            </form>
+        </div>
+
+        <div class="modal_sidebar_btn z-depth-1 file_attachment">Attachment</div>
+        <form class="modal_for_attachment z-depth-1" th:id="attach_form">
+            <div class="attachment_btn_header">Attach</div>
+            <input name="userId" type="hidden" th:value="${user.id}">
+            <input name="cardId" type="hidden" th:value="${param.cardId}">
+            <input type="file" id="fileUpload" name="file"/>
+            <div class="attach_from_computer">Computer</div>
+            <div class="attach_with_link">Attach a link</div>
+            <input type="text" class="link_for_attachment" placeholder="Paste any link here..."/>
+            <div class="link_submit z-depth-1" id="attach_btn">Attach</div>
+        </form>
+
+    </div>
+</div>
+
+<footer th:replace="fragments/layout :: footer"></footer>
+</body>
+</html>

@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+    <link href="webjars/bootstrap/4.4.1-1/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="http://code.jquery.com/ui/1.11.4/themes/smoothness/jquery-ui.css">
+    <link type="text/css" rel="stylesheet" th:href="@{/css/todo.css}" media="screen,projection"/>
+</head>
+<body>
+<div th:fragment="todotable">
+    <div id="toDoProgressBar">
+
+        <div class="progress">
+            <div class="progress-bar" th:style="'width:'+${checklist.percent}+'%;'" role="progressbar"
+                 th:attr="aria-valuenow=${checklist.percent}" aria-valuemin="0" aria-valuemax="100"></div>
+        </div>
+    </div>
+
+    <div class="table-responsive">
+        <div th:each="item : ${checklist.toDoItemList}">
+            <div class="custom-control custom-checkbox" th:if="${item.isDone} == true">
+                <input type="checkbox" class="ActiveCheck custom-control-input" th:id="${item.id}"
+                       th:checked="${item.isDone}">
+                <label class="custom-control-label toDoCheck" th:for="${item.id}" th:text="${item.description}"></label>
+            </div>
+            <div class="custom-control custom-checkbox" th:if="${item.isDone} == false">
+                <input type="checkbox" class="ActiveCheck custom-control-input" th:id="${item.id}"
+                       th:checked="${item.isDone}">
+                <label class="custom-control-label" th:for="${item.id}" th:text="${item.description}"></label>
+            </div>
+        </div>
+    </div>
+</div>
+<script src="webjars/jquery/3.5.0/jquery.min.js"></script>
+<script src="webjars/bootstrap/4.4.1-1/js/bootstrap.min.js"></script>
+<script th:src="@{/js/AddCheckBoxListener.js}"></script>
+</body>
+</html>

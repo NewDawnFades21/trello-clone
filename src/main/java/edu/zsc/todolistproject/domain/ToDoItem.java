@@ -7,5 +7,15 @@ public class ToDoItem {
     private Integer id;
     private String description;
     private boolean isDone;
-    private User user;
+    private long checklistId;
+
+    public boolean getIsDone() {
+        return isDone;
+    }
+
+    public void setIsDone(boolean done) {
+        isDone = done;
+    }
+
+
 }

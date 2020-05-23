@@ -1,234 +1,431 @@
-var TODO = (function (window){
+var TODO = (function (window) {
 
-	 'use strict';
+    'use strict';
 
-	var list_html = "<div class='list_wrapper'>" +
-            "<div class='list_content z-depth-1'>" +
-                "<div class='list_header'>"+
-                 "<textarea class='list_header_name'>{{input-value}}</textarea>"+
-               "</div>" +
-                "<div class='list_cards'></div>" +
-				"<div class='card_composer'>" +
-                    "<div class='add_card_form'>" +
-                      "<textarea class='list_card_composer_textarea'></textarea>" +
-                       "<a class='waves-effect  waves-light btn card_save blue-grey lighten-5'>save</a>" +
-                       "<a class='waves-effect waves-light btn card_cancel blue-grey lighten-5'>cancel</a>" +
-                    "</div>" +
-                    "<a class='add_card' href='#''>Add a Card...</a>" +
-                "</div>" +
-            "</div>" +
-          "</div>"
+    var list_html = "<div class='list_wrapper'>" +
+        "<div class='list_content z-depth-1'>" +
+        "<div class='list_header'>" +
+        "<textarea class='list_header_name'>{{input-value}}</textarea>" +
+        "</div>" +
+        "<div class='list_cards'></div>" +
+        "<div class='card_composer'>" +
+        "<div class='add_card_form'>" +
+        "<textarea class='list_card_composer_textarea'></textarea>" +
+        "<a class='waves-effect  waves-light btn card_save blue-grey lighten-5'>save</a>" +
+        "<a class='waves-effect waves-light btn card_cancel blue-grey lighten-5'>cancel</a>" +
+        "</div>" +
+        "<a class='add_card' href='#''>Add a Card...</a>" +
+        "</div>" +
+        "</div>" +
+        "</div>"
 
     var list_template = Handlebars.compile(list_html);
 
     var card_html = "<div class='list_card'>" +
-      						"<div class='list_card_detail'>" +
-                      	 		"<a class='list_card_title modal-trigger modalLink' dir='auto' href='#modalLayer' >{{value}}</a>" +
-                     	 	"</div>" +
-                      "</div>";
+        "<div class='list_card_detail'>" +
+        "<a class='list_card_title modal-trigger modalLink' dir='auto' href='#modalLayer' >{{value}}</a>" +
+        "</div>" +
+        "</div>";
 
     var card_template = Handlebars.compile(card_html);
 
-    var comment_html =   "<div class='comment'>" +
-			                    "<div class='commenter'>{writer_name}</div>" +
-			                    "<div class='comment_contents z-depth-1'>{{comment_contents}}</div>" +
-			                    "<div class='comment_date'>{{current_time}} - </div>" +
-			                    "<div class='comment_reply'> Reply</div>" +
-              			  "</div>";
+    var comments_html = $("#comments").html()
 
-    var comment_template = Handlebars.compile(comment_html);       			             
+    var comments_template = Handlebars.compile(comments_html)
 
-	function init(){
+    var checklist_html = "<hr>" +
+        "<p>{{title}}</p>" +
+        "<div class='tableDiv'></div>" +
+        "<form class='toDoCreateForm'>" +
+        "<input type='hidden' name='checklistId' value='{{id}}'>" +
+        "<input type='hidden' name='cardId' value='{{cardId}}'>" +
+        "<input class='add_item'>" +
+        "<div class='invalid-feedback'></div>" +
+        "</form>";
 
-  		$("#board_canvas").on("click", ".modalLink", show_modal);
-		$(".btn-floating").on("click", create_list);
-		$(".save").on("click", add_list);
-		$("#board_canvas").on("click",".add_card", add_card);
-		$("#board_canvas").on("click",".card_save", card_save);
-		$("#board_canvas").on("click",".card_cancel", card_cancel);
-   		$( "#sortable" ).disableSelection();
-		$(".add_list a.cancel").on("click", cancel);
-		$(".add_list").removeClass("ui-sortable-handle");
-   		$(".attach_from_computer").on("click", file_upload);
-   		$(".comment_send").on("click", add_comment);
-   		$( "#sortable" ).sortable({
-    		  placeholder: "ui-state-highlight",
-    		  cancel: ".add_list"
-   		});
-   		$( "#board_canvas" ).sortable();
-  		$( "#board_canvas" ).disableSelection();
-   		$(".members_btn").on("click", search_member);
-   		$(".due_date_btn").on("click", setting_date);
-   		$(".checklist_btn").on("click", setting_checklist);
-   		$(".file_attachment").on("click", setting_attachment);
-	    $(".datepicker").pickadate({
-			    selectMonths: true, 
-			    selectYears: 15 
-	  	});
-	  	$(".close_button").on("click", close_modal);
-	  	$(".shadow_body").on("click", close_modal);
-	  	$('.modal-trigger').leanModal();
-	}
+    var checklist_template = Handlebars.compile(checklist_html);
 
-	function close_modal(){
+    var checklists_html = $("#checklists").html()
 
-		$("#modalLayer").fadeOut("slow");
-		$(".shadow_body").fadeOut("slow");
-	}
+    var checklists_template = Handlebars.compile(checklists_html);
 
-	function setting_attachment(){
+    var attachment_html = "<p>Attatchment</p>" +
+        "<div class='atttachmentDiv'>" +
+        "<img id='theImg' class='img-thumbnail' src='{{attach_url}}'/>" +
+        "</div>";
+    var attachment_tamplate = Handlebars.compile(attachment_html);
 
-		if($(".modal_for_attachment").hasClass("clicked")){
-			$(".modal_for_attachment").removeClass("clicked").slideUp();
-			return;
-		}
+    var comment_html = "<div class='comment'>" +
+        "<div class='commenter'>{{user.username}}</div>" +
+        "<div class='comment_contents z-depth-1'>{{content}}</div>" +
+        "<div class='comment_date'>{{createTime}} - </div>" +
+        "<div class='comment_reply'> Reply</div>" +
+        "</div>";
 
-		$(".modal_for_attachment").addClass("clicked").slideDown();
-	}
+    var comment_template = Handlebars.compile(comment_html);
 
-	function setting_date(){
+    function init() {
+        $("#board_canvas").on("click", ".modalLink", show_modal);
 
-		if($(".modal_for_due_date").hasClass("clicked")){
-			$(".modal_for_due_date").removeClass("clicked").slideUp();
-			return;
-		}
-
-		$(".modal_for_due_date").addClass("clicked").slideDown();
-		
-	}
-
-	function setting_checklist() {
-		if($(".modal_for_checklist").hasClass("clicked")){
-			$(".modal_for_checklist").removeClass("clicked").slideUp();
-			return;
-		}
-
-		$(".modal_for_checklist").addClass("clicked").slideDown();
-	}
-
-	function search_member(){
-
-		console.log("asd");
-		if($(".modal_for_members").hasClass("clicked")){
-			$(".modal_for_members").removeClass("clicked").slideUp();
-			return;
-		}
-
-		$(".modal_for_members").addClass("clicked").slideDown();
-	}
-
-	function add_comment(e){
-	
-		var comment_contents = $(".comment_contents").val();
-		var now = new Date();
-		var currentTime = now.getDate() + " " +
-					  month_written_english(now.getMonth()+1) + " " +
-					  now.getFullYear() + " at " +
-					  now.getHours() + ":" +
-					  now.getMinutes();
-		$(comment_template({"comment_contents":comment_contents, "current_time":currentTime})).appendTo(".comments");
-		$(".comment_contents").val("");
+        $(".btn-floating").on("click", create_list);
+        $(".save").on("click", add_list);
+        $("#board_canvas").on("click", ".add_card", add_card);
+        $("#board_canvas").on("click", ".card_save", card_save);
+        $("#board_canvas").on("click", ".card_cancel", card_cancel);
+        $("#sortable").disableSelection();
+        $(".add_list a.cancel").on("click", cancel);
+        $(".add_list").removeClass("ui-sortable-handle");
 
 
-	}
+        $(".list_header_name").on("change", change_deck_title);
+        $(".attach_from_computer").on("click", file_upload);
+        $(".comment_send").on("click", add_comment);
+        $("#sortable").sortable({
+            placeholder: "ui-state-highlight",
+            cancel: ".add_list"
+        });
+        $("#board_canvas").sortable();
+        $("#board_canvas").disableSelection();
+        $(".members_btn").on("click", search_member);
+        $(".due_date_btn").on("click", setting_date);
+        $(".checklist_btn").on("click", setting_checklist);
+        $("#attach_btn").on("click", addAttachment);
+        $("#fileUpload").on("change", onChangeFileUpload);
+        $(".add_checklist_btn").on("click", addCheckList);
+        $(".file_attachment").on("click", setting_attachment);
+        $(".datepicker").pickadate({
+            selectMonths: true,
+            selectYears: 15
+        });
+        $(".close_button").on("click", close_modal);
+        $(".shadow_body").on("click", close_modal);
+        $('.modal-trigger').leanModal();
+    }
 
-	function month_written_english(month){
+    function close_modal() {
+        $("#modalLayer").fadeOut("slow");
+        $(".shadow_body").fadeOut("slow");
+    }
 
-		if(month === 1){
-			return "Jan";
-		}else if(month === 2){
-			return "Feb";
-		}else if(month === 3){
-			return "Mar";
-		}else if(month === 4){
-			return "Apr";
-		}else if(month === 5){
-			return "May";
-		}else if(month === 6){
-			return "Jun";
-		}else if(month === 7){
-			return "July";
-		}else if(month === 8){
-			return "Aug";
-		}else if(month === 9){
-			return "Sep";
-		}else if(month === 10){
-			return "Oct";
-		}else if(month === 11){
-			return "Nov";
-		}else if(month === 12){
-			return "Dec";
-		}
-	}
+    function setting_attachment() {
 
-	function file_upload(){
-		$("#fileUpload").trigger("click");
-	}
+        if ($(".modal_for_attachment").hasClass("clicked")) {
+            $(".modal_for_attachment").removeClass("clicked").slideUp();
+            return;
+        }
 
-	function show_modal(e){
-		$(".shadow_body").fadeIn("slow");
-		$("#modalLayer").fadeIn("slow");
-		var title = $(e.target).text();
-		$(".card_title_in_modal").text(title);
-		var list_name = $(e.target).closest(".list_content").find(".list_header_name").val();
-		$(".list_name").text(list_name);
-	}
+        $(".modal_for_attachment").addClass("clicked").slideDown();
+    }
 
-	function card_cancel(e){
+    function setting_date() {
 
-		$(e.target).closest(".card_composer .add_card_form").css('display', 'none');
-		$(e.target).closest(".card_composer").find("a.add_card").css('display', 'block');
-	}
+        if ($(".modal_for_due_date").hasClass("clicked")) {
+            $(".modal_for_due_date").removeClass("clicked").slideUp();
+            return;
+        }
 
-	function cancel(){
+        $(".modal_for_due_date").addClass("clicked").slideDown();
 
-		$(".btn-floating").css('display','block');
-		$(".add_list_form").css('display','none');
+    }
 
-	}
+    function setting_checklist() {
+        if ($(".modal_for_checklist").hasClass("clicked")) {
+            $(".modal_for_checklist").removeClass("clicked").slideUp();
+            return;
+        }
 
-	function modal(){
-		$('.modal-trigger').leanModal();
-	}
+        $(".modal_for_checklist").addClass("clicked").slideDown();
+    }
 
-	function create_list(){
+    function search_member() {
 
-		$(".btn-floating").css('display','none');
-		$(".add_list_form").css('display','block');
-	}
+        console.log("asd");
+        if ($(".modal_for_members").hasClass("clicked")) {
+            $(".modal_for_members").removeClass("clicked").slideUp();
+            return;
+        }
 
-	function add_card(e){
-		// $(this).closest(".card_composer").find()
-		$(e.target).parent().find(".add_card_form").css('display', 'block');
-		$(e.target).parent().find("a.add_card").css('display', 'none');
-	}
-	function card_save(e){
+        $(".modal_for_members").addClass("clicked").slideDown();
+    }
 
-		$(".add_card_form").css('display', 'none');
-		var card_text = $(e.target).parent(".add_card_form").find(".list_card_composer_textarea").val();
-		var $list_wrapper = $(e.target).closest(".list_wrapper");
-		var str = card_template({"value":card_text});
-		$list_wrapper.find(".list_cards").append(str);
-		$(e.target).parent(".add_card_form").find(".list_card_composer_textarea").val("");
-		$(e.target).parents(".card_composer").find("a.add_card").css('display', 'block');
+    function change_deck_title(e) {
+        var title = $(e.target).val()
+        // alert(title)
+        var boardId = $(e.target).parents(".list_header").find("input[name='boardId']").val();
+        var id = $(e.target).parents(".list_header").find("input[name='id']").val();
+        $.ajax({
+            url: "/deck/update",
+            type: "PUT",
+            data: {
+                "id": id,
+                "title": title,
+                "boardId": boardId
+            },
+            success: function () {
+                console.log("修改成功")
+            },
+            error: function () {
+                console.log("修改失败")
+            }
+        })
+    }
 
-	}
-	
-	function add_list(){
+    function add_comment(e) {
+        var user_id = $(".comment_frame").find("input[name='userId']").val()
+        var card_id = $(".card_title_in_modal").find("input[name='id']").val();
+        var content = $(".comment_contents").val()
+        $.ajax({
+            url: "/comment/add",
+            type: "POST",
+            data: {
+                "userId": user_id,
+                "cardId": card_id,
+                "content": content
+            },
+            success: function (res) {
+                $(".comment").html($(comment_template(res))).appendTo("#comments")
+                $(".comment_contents").val()
+            }
+        })
 
-		var list_name = $("#add_list").val();
-		var str = list_html.replace(/\{\{input-value\}\}/gi,list_name);
-		$(".add_list").before(str);
-		$("#add_list").val("");
-		$(".add_list_form").css('display','none');
-		$(".btn-floating").css('display','block');
-	}
+    }
 
-	return {
-		"init" : init
-	}
+    function addCheckList(e) {
+        var user_id = $(".comment_frame").find("input[name='userId']").val()
+        var card_id = $(".card_title_in_modal").find("input[name='id']").val();
+        var title = $("#checklist").val()
+        $.ajax({
+            url: "/checklist/add",
+            type: "POST",
+            data: {
+                "userId": user_id,
+                "cardId": card_id,
+                "title": title
+            },
+            success: function (checklist) {
+                console.log(checklist)
+                $(".checklistDiv").html($(checklist_template(checklist))).appendTo("#checklists");
+                $("#checklist").val("");
+            }
+        })
+    }
+
+    function onChangeFileUpload(e) {
+        // Stop default form Submit.
+        e.preventDefault();
+        // Get form
+        var form = $('#attach_form')[0];
+
+        var data = new FormData(form);
+        if (data != null) {
+
+            $.ajax({
+                type: "POST",
+                url: "/uploadMultiFiles",
+                data: data,
+                // prevent jQuery from automatically transforming the data into a query string
+                processData: false,
+                contentType: false,
+                cache: false,
+                timeout: 1000000,
+                success: function (data, textStatus, jqXHR) {
+                    $(attachment_tamplate({"attach_url": data})).appendTo(".modal_content");
+                    console.log("SUCCESS : ", data);
+                },
+                error: function (jqXHR, textStatus, errorThrown) {
+                    // $("#result").html(jqXHR.responseText);
+                    console.log("ERROR : ", jqXHR.responseText);
+                    // $("#submitButton").prop("disabled", false);
+                    layer.alert("Something goes wrong...", function (index) {
+                        // 回调方法
+                        layer.close(index);
+                    });
+
+                }
+            });
+        }
+
+    }
+
+    //上传文件
+    function addAttachment(e) {
+        var attach_url;
+        attach_url = $(e.target).parent().find(".link_for_attachment").val()
+        if (attach_url != '') {
+            $.ajax({
+                url: "/downloadFile",
+                type: "POST",
+                data: JSON.stringify({"attach_url": attach_url}),
+                // prevent jQuery from automatically transforming the data into a query string
+                processData: false,
+                contentType: 'application/json',
+                cache: false,
+                timeout: 1000000,
+                success: function (data, textStatus, jqXHR) {
+                    $(attachment_tamplate({"attach_url": data})).appendTo(".modal_content");
+                    console.log("SUCCESS : ", data);
+                    $(e.target).parent().find(".link_for_attachment").val("")
+                },
+                error: function (jqXHR, textStatus, errorThrown) {
+                    // $("#result").html(jqXHR.responseText);
+                    console.log("ERROR : ", jqXHR.responseText);
+                    // $("#submitButton").prop("disabled", false);
+                    layer.msg("403ERROR", {time: 2000, icon: 5, shift: 6}, function () {
+
+                    });
+                    $(e.target).parent().find(".link_for_attachment").val("")
+
+                }
+            })
+        }
+    }
+
+    function month_written_english(month) {
+
+        if (month === 1) {
+            return "Jan";
+        } else if (month === 2) {
+            return "Feb";
+        } else if (month === 3) {
+            return "Mar";
+        } else if (month === 4) {
+            return "Apr";
+        } else if (month === 5) {
+            return "May";
+        } else if (month === 6) {
+            return "Jun";
+        } else if (month === 7) {
+            return "July";
+        } else if (month === 8) {
+            return "Aug";
+        } else if (month === 9) {
+            return "Sep";
+        } else if (month === 10) {
+            return "Oct";
+        } else if (month === 11) {
+            return "Nov";
+        } else if (month === 12) {
+            return "Dec";
+        }
+    }
+
+    function file_upload() {
+        $("#fileUpload").trigger("click");
+    }
+
+    function show_modal(e) {
+        $(".shadow_body").fadeIn("slow");
+        $("#modalLayer").fadeIn("slow");
+        getCardInfo(e);
+    }
+
+    function getCardInfo(e) {
+        var cardId = $(e.target).attr("cardId");
+        if (cardId == null) {
+            cardId = $(e.target).attr("id").slice(4)
+        }
+        $.ajax({
+            url: "/getCardInfo",
+            data: {
+                "cardId": cardId
+            },
+            success: function (res) {
+                console.log(res)
+                var cardId = res.id
+                $(".card_title_in_modal input[name='id']").val(cardId);
+                var title = res.title;
+                $(".card_title_in_modal input[name='title']").val(title);
+                var list_name = $(e.target).closest(".list_content").find(".list_header_name").val();
+                $(".list_name").text(list_name);
+                // console.log(JSON.stringify(res.checklists))
+                $("#checklists").html($(checklists_template({Checklists: res.checklists})))
+                // console.log(JSON.stringify(res.comments))
+                $("#comments").html($(comments_template({Comments: res.comments})))
+                for (var i = 0; i < res.checklists.length; i++) {
+                    var checklistId = res.checklists[i].id
+                    $("#tablediv" + checklistId).load("/todo/buildToDoTable", {checklistId: checklistId})
+                }
+            }
+
+        })
+    }
+
+
+    function card_cancel(e) {
+
+        $(e.target).closest(".card_composer .add_card_form").css('display', 'none');
+        $(e.target).closest(".card_composer").find("a.add_card").css('display', 'block');
+    }
+
+    function cancel() {
+
+        $(".btn-floating").css('display', 'block');
+        $(".add_list_form").css('display', 'none');
+
+    }
+
+    function modal() {
+        $('.modal-trigger').leanModal();
+    }
+
+    function create_list() {
+
+        $(".btn-floating").css('display', 'none');
+        $(".add_list_form").css('display', 'block');
+    }
+
+    function add_card(e) {
+        // $(this).closest(".card_composer").find()
+        $(e.target).parent().find(".add_card_form").css('display', 'block');
+        $(e.target).parent().find("a.add_card").css('display', 'none');
+    }
+
+    function card_save(e) {
+
+        var self = $(this)
+        var deckId = self.parent(".add_card_form").find("input[name='deckId']").val();
+        var title = self.parent(".add_card_form").find(".list_card_composer_textarea").val();
+        var userId = $("#userId").val()
+        $.ajax({
+            url: "/card/add",
+            type: "POST",
+            data: {
+                "title": title,
+                "deckId": deckId,
+                "userId": userId
+            },
+            success: function (card) {
+                $(".add_card_form").css('display', 'none');
+                var card_text = $(e.target).parent(".add_card_form").find(".list_card_composer_textarea").val();
+                var $list_wrapper = $(e.target).closest(".list_wrapper");
+                var str = card_template({"value": card_text});
+                $list_wrapper.find(".list_cards").append(str);
+                $(e.target).parent(".add_card_form").find(".list_card_composer_textarea").val("");
+                $(e.target).parents(".card_composer").find("a.add_card").css('display', 'block');
+                // window.location.href="/board/"+userId;
+            },
+            error: function () {
+                console.log("添加失败")
+            }
+        })
+    }
+
+    function add_list() {
+
+        var list_name = $("#add_list").val();
+        var str = list_html.replace(/\{\{input-value\}\}/gi, list_name);
+        $(".add_list").before(str);
+        $("#add_list").val("");
+        $(".add_list_form").css('display', 'none');
+        $(".btn-floating").css('display', 'block');
+    }
+
+    return {
+        "init": init
+    }
 })(window);
 
-$(function(){
+$(function () {
     TODO.init();
 });
+

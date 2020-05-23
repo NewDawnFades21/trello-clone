@@ -1,9 +1,12 @@
 spring:
   datasource:
-    url: jdbc:mysql://localhost:3306/todo
+    url: jdbc:mysql://localhost:3306/todo?useUnicode=true&characterEncoding=UTF-8&serverTimezone=UTC
     username: root
     driver-class-name: com.mysql.cj.jdbc.Driver
     type: com.mchange.v2.c3p0.ComboPooledDataSource
     password: sfzhhsw1221
   thymeleaf:
     cache: false
+mybatis:
+  configuration:
+    map-underscore-to-camel-case: true
