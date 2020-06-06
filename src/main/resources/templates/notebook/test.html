@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head th:replace="fragments/layout::head">
+
+</head>
+<body>
+<div class="container-fluid" id="app">
+    <div class="row">
+    <div class="row-cols-4">
+        <div class="menu">
+        <ul>
+            <div class="menu2">
+            <li><a data-href="/notebook/test1" href="javascript:;" >标题1</a></li>
+            </div>
+            <div class="menu2">
+                <li><a data-href="/notebook/test2" href="javascript:;" >标题2</a></li>
+            </div>
+        </ul>
+        </div>
+    </div>
+    <div class="row-cols-7 workingRoom">
+
+    </div>
+    </div>
+</div>
+</div>
+
+
+
+<!--底部-->
+<footer th:replace="fragments/layout::footer">
+
+</footer>
+
+<script>
+    $(function () {
+        $.ajax({
+            type:"GET",
+            url:'/notebook/test1',
+            success:function (data) {
+                $('.workingRoom').html(data);
+            }
+        });
+        $('.menu ul li').on('click',function () {
+            var href=$(this).find("a").attr('data-href');
+            $('.workingRoom').empty();
+            $.ajax({
+                type:"GET",
+                url:href,
+                success:function (data) {
+                    $('.workingRoom').html(data);
+                }
+            });
+        });
+    });
+
+
+
+</script>
+
+</body>
+</html>

@@ -1,0 +1,45 @@
+.main{
+
+}
+a{
+    text-decoration: none;
+    color: black;
+}
+a:hover{
+    text-decoration: none;
+}
+li{
+    list-style: none;
+}
+#zhuTi{
+    padding: 3%;
+}
+
+.content{
+}
+
+/*0,99,208*/
+/*0,88,185*/
+.current-single-page,.person-course-single-page{padding: 5px; margin:5% 0 5% 0;background-color: rgb(0,88,185);box-shadow: #888 2px 2px 2px;border-radius:2%; height:90px;width:159px;}
+.isCheck{ z-index: 15995 !important;}
+.current-single-page p{color: white}
+#a{
+    background-color: red;
+    position: fixed;
+    display: none;
+}
+
+#createNewBoard{
+    display: block;
+    text-align: center;
+    line-height: 75px;
+}
+.person-course{
+    margin-top: 5%;
+}
+
+
+/*团队菜单*/
+.inside-menu>li{
+
+}

@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head th:replace="fragments/layout2::head">
+    <meta charset="UTF-8">
+    <title>Title</title>
+</head>
+<body>
+<!--//导航栏-->
+<!--<header th:insert="fragments/layout2::header">-->
+<!--</header>-->
+
+<div class="teamInfo">
+
+    <div class="container-fluid">
+        <div class="row">
+            <div class="col-4"></div>
+            <div class="col-4">
+        <span class="text-muted">
+           <svg class="bi bi-person-square" width="3em" height="3em" viewBox="0 0 16 16" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
+             <path fill-rule="evenodd" d="M14 1H2a1 1 0 0 0-1 1v12a1 1 0 0 0 1 1h12a1 1 0 0 0 1-1V2a1 1 0 0 0-1-1zM2 0a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V2a2 2 0 0 0-2-2H2z" clip-rule="evenodd"/>
+             <path fill-rule="evenodd" d="M2 15v-1c0-1 1-4 6-4s6 3 6 4v1H2zm6-6a3 3 0 1 0 0-6 3 3 0 0 0 0 6z" clip-rule="evenodd"/>
+           </svg>
+            <span>团队名</span>
+        </span>
+            </div>
+            <div class="col-4"></div>
+        </div>
+    </div>
+
+</div>
+
+
+
+<div id="tabs">
+    <ul class="nav nav-tabs">
+        <li class="active"><a href="#item1" data-toggle="tab">项目一</a></li>
+        <li><a href="#item2" data-toggle="tab">项目二</a></li>
+        <li><a href="#item3" data-toggle="tab">项目三</a></li>
+    </ul>
+
+    <div class="tab-content">
+        <div class="tab-pane fade in active" id="item1">
+            <table border="1">
+               ccc
+            </table>
+        </div>
+        <div class="tab-pane fade" id="item2">
+            <table border="1">
+               aaa
+            </table>
+        </div>
+        <div class="tab-pane fade" id="item3">
+            <table border="1">
+                bbb
+            </table>
+        </div>
+    </div>
+
+</div>
+
+
+
+<!--底部-->
+<footer th:replace="fragments/layout2::footer">
+</footer>
+
+</body>
+</html>
