@@ -24,12 +24,12 @@ public class CommentController {
     private UserMapper userMapper;
 
     @PostMapping("/comment/add")
-    public ResponseEntity<?> addComment(Comment comment) {
+    public ResponseEntity<Comment> addComment(Comment comment) {
         comment.setCreateTime(new Date());
         User user = userMapper.getUserById(comment.getUserId());
         comment.setUser(user);
         commentMapper.addComment(comment);
-        return new ResponseEntity<String>("add comment success!!", HttpStatus.OK);
+        return new ResponseEntity<Comment>(comment, HttpStatus.OK);
     }
 
 }

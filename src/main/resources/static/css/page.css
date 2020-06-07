@@ -736,6 +736,16 @@ html > body #sortable li {
     line-height: 1.2em;
 }
 
+.thumbnail {
+    display: block;
+    overflow: hidden;
+    height: 200px;
+    width: 200px;
+}
 
+.thumbnail img {
+    display: block;
+    height: 100%;
+}
 
 

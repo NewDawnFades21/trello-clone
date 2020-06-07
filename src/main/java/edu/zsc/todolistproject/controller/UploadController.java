@@ -39,7 +39,7 @@ public class UploadController {
             e.printStackTrace();
             return new ResponseEntity<>("Error: " + e.getMessage(), HttpStatus.BAD_REQUEST);
         }
-        return new ResponseEntity<String>("/uploads/" + file.getOriginalFilename(), HttpStatus.OK);
+        return new ResponseEntity<String>(file.getOriginalFilename(), HttpStatus.OK);
     }
 
     @PostMapping("/downloadFile")
@@ -55,7 +55,7 @@ public class UploadController {
             e.printStackTrace();
             return new ResponseEntity<>("Error: " + e.getMessage(), HttpStatus.BAD_REQUEST);
         }
-        return new ResponseEntity<String>("/uploads/" + attach_url, HttpStatus.OK);
+        return new ResponseEntity<String>(attach_url, HttpStatus.OK);
     }
 
 

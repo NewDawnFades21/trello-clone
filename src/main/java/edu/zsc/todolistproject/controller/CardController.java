@@ -23,6 +23,8 @@ public class CardController {
     private ChecklistMapper checklistMapper;
     @Autowired
     private ToDoMapper toDoMapper;
+    @Autowired
+    private AttachmentMapper attachmentMapper;
 
     @PostMapping("/card/add")
     public ResponseEntity<Card> addCard(long deckId, String title) {
@@ -55,6 +57,9 @@ public class CardController {
             checklist.setToDoItemList(toDoItemList);
         }
         card.setChecklists(checklists);
+        List<Attachment> attachments = attachmentMapper.getAttachmentsByCardId(cardId);
+        card.setAttachments(attachments);
+
         return card;
     }
 

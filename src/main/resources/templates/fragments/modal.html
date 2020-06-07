@@ -23,30 +23,34 @@
 
 
         <p>Activity</p>
-        <div class="comments" id="comments">
-            {{#Comments}}
-            <div class='comment'>
-                <div class='commenter'>{{user.username}}</div>
-                <div class='comment_contents z-depth-1'>{{content}}</div>
-                <div class='comment_date'>{{createTime}} -</div>
-                <div class='comment_reply'> Reply</div>
-            </div>
-            {{/Comments}}
+        <div class="comments">
+<!--            {{#Comments}}-->
+<!--            <div class='comment' id="comment{{id}}">-->
+<!--                <div class='commenter'>{{user.username}}</div>-->
+<!--                <div class='comment_contents z-depth-1'>{{content}}</div>-->
+<!--                <div class='comment_date'>{{formatTime createTime 'YYYY-MM-DD hh:mm:ss'}} </div>-->
+<!--                <div class='comment_reply'> Reply</div>-->
+<!--            </div>-->
+<!--            {{/Comments}}-->
         </div>
         <div id="checklists">
-            {{#Checklists}}
-            <div class="checklistDiv">
-                <p>{{title}}</p>
-                <div class='tableDiv' id="tablediv{{id}}">
-                </div>
-                <form class='toDoCreateForm'>
-                    <input type='hidden' name='checklistId' value='{{id}}'>
-                    <input type='hidden' name='cardId' value='{{cardId}}'>
-                    <input class='add_item'>
-                    <div class='invalid-feedback'></div>
-                </form>
-            </div>
-            {{/Checklists}}
+<!--            {{#Checklists}}-->
+<!--            <div class="checklistDiv">-->
+<!--                <p>{{title}}</p>-->
+<!--                <div class='tableDiv' id="tablediv{{id}}">-->
+<!--                </div>-->
+<!--                <form class='toDoCreateForm'>-->
+<!--                    <input type='hidden' name='checklistId' value='{{id}}'>-->
+<!--                    <input type='hidden' name='cardId' value='{{cardId}}'>-->
+<!--                    <input class='add_item'>-->
+<!--                    <div class='invalid-feedback'></div>-->
+<!--                </form>-->
+<!--            </div>-->
+<!--            {{/Checklists}}-->
+        </div>
+        <p>Attachment</p>
+        <div id="attachments">
+
         </div>
     </div>
     <button type="button" class="close_button">X</button>
@@ -96,8 +100,7 @@
         <form class="modal_for_attachment z-depth-1" th:id="attach_form">
             <div class="attachment_btn_header">Attach</div>
             <input name="userId" type="hidden" th:value="${user.id}">
-            <input name="cardId" type="hidden" th:value="${param.cardId}">
-            <input type="file" id="fileUpload" name="file"/>
+            <input type="file" id="fileUpload" name="file" multiple/>
             <div class="attach_from_computer">Computer</div>
             <div class="attach_with_link">Attach a link</div>
             <input type="text" class="link_for_attachment" placeholder="Paste any link here..."/>

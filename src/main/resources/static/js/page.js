@@ -29,13 +29,9 @@ var TODO = (function (window) {
 
     var card_template = Handlebars.compile(card_html);
 
-    var comments_html = $("#comments").html()
-
-    var comments_template = Handlebars.compile(comments_html)
-
     var checklist_html = "<hr>" +
         "<p>{{title}}</p>" +
-        "<div class='tableDiv'></div>" +
+        "<div class='tableDiv' id='tablediv{{id}}'></div>" +
         "<form class='toDoCreateForm'>" +
         "<input type='hidden' name='checklistId' value='{{id}}'>" +
         "<input type='hidden' name='cardId' value='{{cardId}}'>" +
@@ -45,20 +41,16 @@ var TODO = (function (window) {
 
     var checklist_template = Handlebars.compile(checklist_html);
 
-    var checklists_html = $("#checklists").html()
-
-    var checklists_template = Handlebars.compile(checklists_html);
-
-    var attachment_html = "<p>Attatchment</p>" +
-        "<div class='atttachmentDiv'>" +
-        "<img id='theImg' class='img-thumbnail' src='{{attach_url}}'/>" +
+    var attachment_html =
+        "<div class='thumbnail'>" +
+        "<img id='theImg' class='img-thumbnail' src='/uploads/{{filename}}'/>" +
         "</div>";
     var attachment_tamplate = Handlebars.compile(attachment_html);
 
-    var comment_html = "<div class='comment'>" +
-        "<div class='commenter'>{{user.username}}</div>" +
+    var comment_html = "<div class='comment' id='comment{{id}}'>" +
+        "<div class='commenter'>{{userId}}</div>" +
         "<div class='comment_contents z-depth-1'>{{content}}</div>" +
-        "<div class='comment_date'>{{createTime}} - </div>" +
+        "<div class='comment_date'> {{formatTime createTime 'YYYY-MM-DD hh:mm:ss'}} </div>" +
         "<div class='comment_reply'> Reply</div>" +
         "</div>";
 
@@ -113,7 +105,6 @@ var TODO = (function (window) {
             $(".modal_for_attachment").removeClass("clicked").slideUp();
             return;
         }
-
         $(".modal_for_attachment").addClass("clicked").slideDown();
     }
 
@@ -183,8 +174,19 @@ var TODO = (function (window) {
                 "content": content
             },
             success: function (res) {
-                $(".comment").html($(comment_template(res))).appendTo("#comments")
-                $(".comment_contents").val()
+                console.log("comment:"+res)
+                $(".comment").html($(comment_template(res))).appendTo(".comments")
+                $(".comment_contents").val("")
+            },
+            error: function (jqXHR, textStatus, errorThrown) {
+                // $("#result").html(jqXHR.responseText);
+                console.log("ERROR : ", jqXHR.responseText);
+                // $("#submitButton").prop("disabled", false);
+                layer.alert("Something goes wrong...", function (index) {
+                    // 回调方法
+                    layer.close(index);
+                });
+
             }
         })
 
@@ -204,7 +206,7 @@ var TODO = (function (window) {
             },
             success: function (checklist) {
                 console.log(checklist)
-                $(".checklistDiv").html($(checklist_template(checklist))).appendTo("#checklists");
+                $(checklist_template(checklist)).appendTo("#checklists");
                 $("#checklist").val("");
             }
         })
@@ -213,6 +215,13 @@ var TODO = (function (window) {
     function onChangeFileUpload(e) {
         // Stop default form Submit.
         e.preventDefault();
+        var card_id = $(".card_title_in_modal").find("input[name='id']").val();
+        $('<input>').attr({
+            type: 'hidden',
+            id: 'cardId',
+            name: 'cardId',
+            value: card_id
+        }).appendTo('#attach_form');
         // Get form
         var form = $('#attach_form')[0];
 
@@ -229,7 +238,7 @@ var TODO = (function (window) {
                 cache: false,
                 timeout: 1000000,
                 success: function (data, textStatus, jqXHR) {
-                    $(attachment_tamplate({"attach_url": data})).appendTo(".modal_content");
+                    $(attachment_tamplate({"filename": data})).appendTo(".modal_content");
                     console.log("SUCCESS : ", data);
                 },
                 error: function (jqXHR, textStatus, errorThrown) {
@@ -262,7 +271,7 @@ var TODO = (function (window) {
                 cache: false,
                 timeout: 1000000,
                 success: function (data, textStatus, jqXHR) {
-                    $(attachment_tamplate({"attach_url": data})).appendTo(".modal_content");
+                    $(attachment_tamplate({"filename": data})).appendTo(".modal_content");
                     console.log("SUCCESS : ", data);
                     $(e.target).parent().find(".link_for_attachment").val("")
                 },
@@ -316,10 +325,11 @@ var TODO = (function (window) {
     function show_modal(e) {
         $(".shadow_body").fadeIn("slow");
         $("#modalLayer").fadeIn("slow");
-        getCardInfo(e);
+        getCardInfo(e)
     }
 
     function getCardInfo(e) {
+        $(e.target).attr("visited",true)
         var cardId = $(e.target).attr("cardId");
         if (cardId == null) {
             cardId = $(e.target).attr("id")
@@ -338,12 +348,21 @@ var TODO = (function (window) {
                 var list_name = $(e.target).closest(".list_content").find(".list_header_name").val();
                 $(".list_name").text(list_name);
                 // console.log(JSON.stringify(res.checklists))
-                $("#checklists").html($(checklists_template({Checklists: res.checklists})))
+                // $("#checklists").html($(checklists_template({Checklists: res.checklists})))
                 // console.log(JSON.stringify(res.comments))
-                $("#comments").html($(comments_template({Comments: res.comments})))
+                $(".comments").html("")
+                $("#checklists").html("")
+                $("#attachments").html("")
+                for (var i = 0; i < res.comments.length; i++){
+                    $(comment_template(res.comments[i])).appendTo(".comments")
+                }
                 for (var i = 0; i < res.checklists.length; i++) {
+                    $(checklist_template(res.checklists[i])).appendTo("#checklists")
                     var checklistId = res.checklists[i].id
                     $("#tablediv" + checklistId).load("/todo/buildToDoTable", {checklistId: checklistId})
+                }
+                for (var i = 0; i < res.attachments.length; i++){
+                    $(attachment_tamplate({"filename": res.attachments[i].filename})).appendTo("#attachments");
                 }
             }
 
