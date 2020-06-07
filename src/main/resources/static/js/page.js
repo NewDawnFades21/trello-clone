@@ -23,7 +23,7 @@ var TODO = (function (window) {
 
     var card_html = "<div class='list_card'>" +
         "<div class='list_card_detail'>" +
-        "<a class='list_card_title modal-trigger modalLink' dir='auto' href='#modalLayer' >{{value}}</a>" +
+        "<a class='list_card_title modal-trigger modalLink' dir='auto' href='#modalLayer' id='{{card_id}}' >{{value}}</a>" +
         "</div>" +
         "</div>";
 
@@ -322,7 +322,7 @@ var TODO = (function (window) {
     function getCardInfo(e) {
         var cardId = $(e.target).attr("cardId");
         if (cardId == null) {
-            cardId = $(e.target).attr("id").slice(4)
+            cardId = $(e.target).attr("id")
         }
         $.ajax({
             url: "/getCardInfo",
@@ -396,9 +396,8 @@ var TODO = (function (window) {
             },
             success: function (card) {
                 $(".add_card_form").css('display', 'none');
-                var card_text = $(e.target).parent(".add_card_form").find(".list_card_composer_textarea").val();
                 var $list_wrapper = $(e.target).closest(".list_wrapper");
-                var str = card_template({"value": card_text});
+                var str = card_template({"card_id":card.id,"value": card.title});
                 $list_wrapper.find(".list_cards").append(str);
                 $(e.target).parent(".add_card_form").find(".list_card_composer_textarea").val("");
                 $(e.target).parents(".card_composer").find("a.add_card").css('display', 'block');
