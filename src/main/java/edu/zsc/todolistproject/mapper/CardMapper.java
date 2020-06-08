@@ -23,6 +23,9 @@ public interface CardMapper {
     @Update("update card set title=#{title} where id=#{id}")
     int updateCardTitle(Long id, String title);
 
+    @Update("update card set description=#{description} where id = #{id}")
+    int updateCardDesc(Long id,String description);
+
     @Select("select * from card")
     List<Card> getCards();
 

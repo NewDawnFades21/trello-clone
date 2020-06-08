@@ -63,10 +63,17 @@ public class CardController {
         return card;
     }
 
-    @PutMapping("/card/update")
+    @PutMapping("/card/update/title")
     public ResponseEntity<String> updateCardTitle(long id, String title) {
         cardMapper.updateCardTitle(id, title);
         return new ResponseEntity<String>("update card title success", HttpStatus.OK);
+    }
+
+    @PutMapping("/card/update/desc")
+    public ResponseEntity<String> updateCardDesc(Long id,String description){
+        cardMapper.updateCardDesc(id, description);
+        return new ResponseEntity<String>("update card desc success", HttpStatus.OK);
+
     }
 
 }

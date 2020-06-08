@@ -9,6 +9,11 @@
             <input type="hidden" name="id" value="{{id}}">
             <input type="text" class="validate" name="title" value="{{title}}">
         </p>
+        <p>Description</p>
+        <div class="comment_frame">
+            <input type="hidden" name="userId" th:value="${user.id}">
+            <textarea class="comment_contents z-depth-1" placeholder="Write a description..." id="description_text"></textarea>
+        </div>
         <div class="list_name_wrapper">
             <span class="in_list">in list</span>
             <span class="list_name">{{list_name}}</span>
@@ -16,7 +21,7 @@
         <p>Add comment</p>
         <div class="comment_frame">
             <input type="hidden" name="userId" th:value="${user.id}">
-            <textarea class="comment_contents z-depth-1" placeholder="Write a comment..."></textarea>
+            <textarea class="comment_contents z-depth-1" placeholder="Write a comment..." id="comment_content"></textarea>
         </div>
         <div class="comment_send">Send</div>
         </br>
@@ -24,29 +29,8 @@
 
         <p>Activity</p>
         <div class="comments">
-<!--            {{#Comments}}-->
-<!--            <div class='comment' id="comment{{id}}">-->
-<!--                <div class='commenter'>{{user.username}}</div>-->
-<!--                <div class='comment_contents z-depth-1'>{{content}}</div>-->
-<!--                <div class='comment_date'>{{formatTime createTime 'YYYY-MM-DD hh:mm:ss'}} </div>-->
-<!--                <div class='comment_reply'> Reply</div>-->
-<!--            </div>-->
-<!--            {{/Comments}}-->
         </div>
         <div id="checklists">
-<!--            {{#Checklists}}-->
-<!--            <div class="checklistDiv">-->
-<!--                <p>{{title}}</p>-->
-<!--                <div class='tableDiv' id="tablediv{{id}}">-->
-<!--                </div>-->
-<!--                <form class='toDoCreateForm'>-->
-<!--                    <input type='hidden' name='checklistId' value='{{id}}'>-->
-<!--                    <input type='hidden' name='cardId' value='{{cardId}}'>-->
-<!--                    <input class='add_item'>-->
-<!--                    <div class='invalid-feedback'></div>-->
-<!--                </form>-->
-<!--            </div>-->
-<!--            {{/Checklists}}-->
         </div>
         <p>Attachment</p>
         <div id="attachments" class="js-attachment-list ui-sortable">

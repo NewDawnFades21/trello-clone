@@ -13,6 +13,7 @@ public class Card {
     private Long id;
     private Long deckId;
     private String title;
+    private String description;
     private List<Comment> comments = new LinkedList<>();
     private List<Checklist> checklists = new LinkedList<>();
     private List<Attachment> attachments = new LinkedList<>();

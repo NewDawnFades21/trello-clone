@@ -69,8 +69,6 @@ var TODO = (function (window) {
         "</span>" +
         "</p>"
         "</div>";
-    var attachment_tamplate = Handlebars.compile(attachment_html);
-
     var comment_html = "<div class='comment' id='comment{{id}}'>" +
         "<div class='commenter'>{{userId}}</div>" +
         "<div class='comment_contents z-depth-1'>{{content}}</div>" +
@@ -80,9 +78,10 @@ var TODO = (function (window) {
 
     var comment_template = Handlebars.compile(comment_html);
 
+    var attachment_tamplate = Handlebars.compile(attachment_html);
+
     function init() {
         $("#board_canvas").on("click", ".modalLink", show_modal);
-
         $(".btn-floating").on("click", create_list);
         $(".save").on("click", add_list);
         $("#board_canvas").on("click", ".add_card", add_card);
@@ -188,7 +187,7 @@ var TODO = (function (window) {
     function add_comment(e) {
         var user_id = $(".comment_frame").find("input[name='userId']").val()
         var card_id = $(".card_title_in_modal").find("input[name='id']").val();
-        var content = $(".comment_contents").val()
+        var content = $("#comment_content").val()
         $.ajax({
             url: "/comment/add",
             type: "POST",
@@ -199,7 +198,7 @@ var TODO = (function (window) {
             },
             success: function (res) {
                 console.log("comment:"+res)
-                $(".comment").html($(comment_template(res))).appendTo(".comments")
+                $(comment_template(res)).appendTo(".comments")
                 $(".comment_contents").val("")
             },
             error: function (jqXHR, textStatus, errorThrown) {
@@ -352,6 +351,7 @@ var TODO = (function (window) {
         getCardInfo(e)
     }
 
+
     function getCardInfo(e) {
         $(e.target).attr("visited",true)
         var cardId = $(e.target).attr("cardId");
@@ -371,6 +371,7 @@ var TODO = (function (window) {
                 $(".card_title_in_modal input[name='title']").val(title);
                 var list_name = $(e.target).closest(".list_content").find(".list_header_name").val();
                 $(".list_name").text(list_name);
+                $("#description_text").val(res.description)
                 // console.log(JSON.stringify(res.checklists))
                 // $("#checklists").html($(checklists_template({Checklists: res.checklists})))
                 // console.log(JSON.stringify(res.comments))
