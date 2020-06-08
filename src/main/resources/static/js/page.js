@@ -42,8 +42,32 @@ var TODO = (function (window) {
     var checklist_template = Handlebars.compile(checklist_html);
 
     var attachment_html =
-        "<div class='thumbnail'>" +
-        "<img id='theImg' class='img-thumbnail' src='/uploads/{{filename}}'/>" +
+        "<div class='attachment-thumbnail'>" +
+        "<a class='attachment-thumbnail-preview js-open-viewer attachment-thumbnail-preview-is-cover' href='/uploads/{{filename}}' target='_blank' title='{{filename}}' style='background-image: url(/uploads/{{filename}})'></a>"+
+        "<p class='attachment-thumbnail-details js-open-viewer'>" +
+        "<span class='attachment-thumbnail-name'>{{filename}}</span>" +
+        "<span class='attachment-thumbnail-details-title-options' style='display: block;'>" +
+        "<span>" +
+        "已添加" +
+        "<span class='date' title='{{formatTime createTime 'YYYY-MM-DD hh:mm:ss'}}'>{{formatTime createTime 'YYYY-MM-DD hh:mm:ss'}}</span>" +
+        "</span>" +
+        "<span>" +
+        "<a class='attachment-thumbnail-details-title-options-item js-reply' href='#'>" +
+        "<span class='attachment-thumbnail-details-options-item-text'>评论</span> " +
+        "</a> " +
+        "</span>" +
+        "<span>" +
+        "<a class='attachment-thumbnail-details-title-options-item js-confirm-delete' href='#'>" +
+        "<span class='attachment-thumbnail-details-options-item-text'>删除</span> " +
+        "</a> " +
+        "</span>" +
+        "<span>" +
+        "<a class='attachment-thumbnail-details-title-options-item js-confirm-edit' href='#'>" +
+        "<span class='attachment-thumbnail-details-options-item-text'>编辑</span> " +
+        "</a> " +
+        "</span>" +
+        "</span>" +
+        "</p>"
         "</div>";
     var attachment_tamplate = Handlebars.compile(attachment_html);
 
@@ -238,7 +262,7 @@ var TODO = (function (window) {
                 cache: false,
                 timeout: 1000000,
                 success: function (data, textStatus, jqXHR) {
-                    $(attachment_tamplate({"filename": data})).appendTo(".modal_content");
+                    $(attachment_tamplate(data)).appendTo(".modal_content")
                     console.log("SUCCESS : ", data);
                 },
                 error: function (jqXHR, textStatus, errorThrown) {
@@ -362,7 +386,7 @@ var TODO = (function (window) {
                     $("#tablediv" + checklistId).load("/todo/buildToDoTable", {checklistId: checklistId})
                 }
                 for (var i = 0; i < res.attachments.length; i++){
-                    $(attachment_tamplate({"filename": res.attachments[i].filename})).appendTo("#attachments");
+                    $(attachment_tamplate(res.attachments[i])).appendTo("#attachments");
                 }
             }
 

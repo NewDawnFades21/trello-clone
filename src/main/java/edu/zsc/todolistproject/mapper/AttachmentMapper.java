@@ -9,7 +9,7 @@ import java.util.List;
 
 @Mapper
 public interface AttachmentMapper {
-    @Insert("insert into attachment (filename,path,user_id,card_id) values(#{filename},#{path},#{userId},#{cardId})")
+    @Insert("insert into attachment (filename,path,user_id,card_id,create_time) values(#{filename},#{path},#{userId},#{cardId},#{createTime})")
     int addAttachment(Attachment attachment);
 
     @Select("select * from attachment where card_id = #{cardId}")

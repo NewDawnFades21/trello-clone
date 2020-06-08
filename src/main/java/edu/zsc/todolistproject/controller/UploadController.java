@@ -15,6 +15,7 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.nio.file.StandardCopyOption;
+import java.util.Date;
 import java.util.Map;
 import java.util.UUID;
 
@@ -28,9 +29,11 @@ public class UploadController {
     @PostMapping("/uploadMultiFiles")
     public ResponseEntity<?> multiUploadFileModel(MultipartFile file, Attachment attachment) {
         try {
-            String uploadFilePath = UPLOAD_DIR + file.getOriginalFilename();
-            attachment.setFilename(file.getOriginalFilename());
+            String filename = file.getOriginalFilename().replaceAll("\\s","");
+            String uploadFilePath = UPLOAD_DIR + filename;
+            attachment.setFilename(filename);
             attachment.setPath(uploadFilePath);
+            attachment.setCreateTime(new Date());
             attatchmentMapper.addAttachment(attachment);
             byte[] bytes = file.getBytes();
             Path path = Paths.get(uploadFilePath);
@@ -39,7 +42,7 @@ public class UploadController {
             e.printStackTrace();
             return new ResponseEntity<>("Error: " + e.getMessage(), HttpStatus.BAD_REQUEST);
         }
-        return new ResponseEntity<String>(file.getOriginalFilename(), HttpStatus.OK);
+        return new ResponseEntity<Attachment>(attachment, HttpStatus.OK);
     }
 
     @PostMapping("/downloadFile")
