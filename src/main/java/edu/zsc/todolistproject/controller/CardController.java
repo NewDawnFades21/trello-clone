@@ -36,9 +36,14 @@ public class CardController {
     }
 
     @GetMapping("/getCardInfo")
-    public ResponseEntity<Object> getCardInfo(@RequestParam Long cardId) {
-        Card card = getCardById(cardId);
-        return new ResponseEntity<Object>(card, HttpStatus.OK);
+    public ResponseEntity<?> getCardInfo(@RequestParam Long cardId) {
+        Card card = null;
+        try{
+            card = getCardById(cardId);
+        }catch (Exception e){
+
+        }
+        return new ResponseEntity<>(card, HttpStatus.OK);
     }
 
     private Card getCardById(Long cardId) {

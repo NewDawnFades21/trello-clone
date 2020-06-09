@@ -334,7 +334,6 @@ body {
 }
 
 .list_card_detail .list_card_title {
-
     clear: both;
     display: block;
     font-weight: 400;
@@ -368,7 +367,22 @@ body {
     float: right;
     border: none;
     background-color: rgba(255, 255, 255, 0);
-    margin: 5px 5px 0 0;
+    text-align: right;
+}
+
+.list_header .close_button{
+    float: right;
+    border: none;
+    background-color: rgba(255, 255, 255, 0);
+    margin: 0px 0px 0 0;
+    text-align: right;
+}
+
+.list_card_detail .close_button{
+    float: right;
+    border: none;
+    background-color: rgba(255, 255, 255, 0);
+    margin: 0px 0px 0 0;
     text-align: right;
 }
 

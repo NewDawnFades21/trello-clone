@@ -12,10 +12,11 @@
     <div class="list_wrapper" th:each="deck:${board.decks}">
         <div class="list_content z-depth-1">
             <div class="list_header">
+                <button type="button" class="close_button">X</button>
                 <input type="hidden" name="id" th:value="${deck.value.id}">
                 <input type="hidden" name="boardId" th:value="${board.id}">
                 <textarea class="list_header_name" placeholder="Input Deck Name"
-                          th:text="${deck.value.title}"></textarea>
+                          th:text="${deck.value.title}" style="width: 90%"></textarea>
             </div>
 
             <div class="list_cards">
@@ -39,7 +40,6 @@
 
         </div>
     </div>
-
     <div class="add_list not_sortable">
         <a class="btn-floating btn-large waves-effect waves-light red">
             <i class="material-icons">add</i>

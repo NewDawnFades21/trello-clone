@@ -42,7 +42,7 @@ var TODO = (function (window) {
     var checklist_template = Handlebars.compile(checklist_html);
 
     var attachment_html =
-        "<div class='attachment-thumbnail'>" +
+        "<div class='attachment-thumbnail' id='attachment{{id}}'>" +
         "<a class='attachment-thumbnail-preview js-open-viewer attachment-thumbnail-preview-is-cover' href='/uploads/{{filename}}' target='_blank' title='{{filename}}' style='background-image: url(/uploads/{{filename}})'></a>"+
         "<p class='attachment-thumbnail-details js-open-viewer'>" +
         "<span class='attachment-thumbnail-name'>{{filename}}</span>" +
@@ -95,6 +95,7 @@ var TODO = (function (window) {
         $(".list_header_name").on("change", change_deck_title);
         $(".attach_from_computer").on("click", file_upload);
         $(".comment_send").on("click", add_comment);
+
         $("#sortable").sortable({
             placeholder: "ui-state-highlight",
             cancel: ".add_list"
@@ -115,6 +116,7 @@ var TODO = (function (window) {
         $(".close_button").on("click", close_modal);
         $(".shadow_body").on("click", close_modal);
         $('.modal-trigger').leanModal();
+
     }
 
     function close_modal() {
@@ -389,6 +391,12 @@ var TODO = (function (window) {
                 for (var i = 0; i < res.attachments.length; i++){
                     $(attachment_tamplate(res.attachments[i])).appendTo("#attachments");
                 }
+            },
+            "error":function (res) {
+                layer.alert(res, function(index){
+                    // 回调方法
+                    layer.close(index);
+                });
             }
 
         })
