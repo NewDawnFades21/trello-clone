@@ -12,4 +12,5 @@ public class Comment {
     private Long cardId;
     private Long userId;
     private User user;
+    private Boolean modified;
 }

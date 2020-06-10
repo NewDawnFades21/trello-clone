@@ -77,30 +77,105 @@ $(document).on("click",'.js-confirm-edit',function(){
 $(document).on("click",".layui-layer-btn",function (e) {
     // Stop default form Submit.
     e.preventDefault();
-    var form = $(this).parents().find(".layui-form")[0];
-    var data = new FormData(form);
-    if (data!=null){
+    var id = $(e.target).closest(".layui-form").find("input[name='id']").val();
+    var filename = $(e.target).closest(".layui-form").find("input[name='filename']").val();
+    $.ajax({
+        type:"PUT",
+        url:"/attachment/update/"+id+"/"+filename,
+        // prevent jQuery from automatically transforming the data into a query string
+        processData: false,
+        contentType: false,
+        cache: false,
+        timeout: 1000000,
+        success:function (res) {
+            console.log(res)
+            layer.msg("更新成功", {time:1000, icon:5, shift:6}, function () {
 
+                $("#attachment"+id).find(".attachment-thumbnail-name").text(res.filename)
+            });
+        },
+        error:function (res) {
+            layer.msg(res, {time:1000, icon:5, shift:6}, function () {
+
+            });
+        }
+    })
+})
+
+$(document).on("click",".comment_edit",function (e) {
+    var content = $(e.target).closest(".comment").find(".comment_contents").text();
+    var replace_html = "<textarea class='comment_contents sub_comment z-depth-1'>"+content+"</textarea>" +
+        "<div class='comment_send comment_edit_btn'>Update</div>";
+    $(e.target).closest(".comment").find(".comment_contents").replaceWith(replace_html);
+})
+
+$(document).on("click",".comment_edit_btn",function (e) {
+    var id = $(e.target).closest(".comment").attr("id").slice(7)
+    var content = $(e.target).closest(".comment").find(".comment_contents").val();
+    $.ajax({
+        "type":"PUT",
+        "url":"/comment/edit",
+        "contentType": "application/json;charset=utf-8",
+        "data":JSON.stringify({
+            "id":id,
+            "content":content
+        }),
+        "success":function (res) {
+            if (res == 1) {
+                var replace_html = "<div class='comment_contents z-depth-1'>"+content+"</div>"
+                $(e.target).closest(".comment").find(".comment_contents").replaceWith(replace_html);
+                $(e.target).remove();
+            }else {
+                layer.msg("更新失败，未知错误", {time:1000, icon:5, shift:6}, function () {
+
+                });
+            }
+        }
+    })
+})
+$(document).on("click",".comment_delete",function (e) {
+    var id = $(e.target).closest(".comment").attr("id").slice(7)
+    layer.confirm("确认删除该评论？",  {icon: 3, title:'删除评论'}, function(cindex){
+        layer.close(cindex);
         $.ajax({
-            type:"PUT",
-            url:"/attachment/update",
-            data: data,
-            // prevent jQuery from automatically transforming the data into a query string
-            processData: false,
-            contentType: false,
-            cache: false,
-            timeout: 1000000,
-            success:function (res) {
-                layer.msg(res, {time:1000, icon:5, shift:6}, function () {
+            "type":"DELETE",
+            "url":"/comment/delete/"+id,
+            "success":function (res) {
+                if (res == 1) {
+                    $(e.target).closest(".comment").remove();
+                }else {
+                    layer.msg("更新失败，未知错误", {time:1000, icon:5, shift:6}, function () {
 
-                });
-            },
-            error:function (res) {
-                layer.msg(res, {time:1000, icon:5, shift:6}, function () {
-
-                });
-
+                    });
+                }
             }
         })
-    }
+    }, function(cindex){
+        layer.close(cindex);
+    });
+
 })
+
+$(document).on("click","a.js-open-viewer",function (e) {
+    $(this).magnificPopup({
+        type: 'image',
+        closeOnContentClick: true,
+        mainClass: 'mfp-img-mobile',
+        image: {
+            verticalFit: true
+        },
+    }).magnificPopup('open');
+    e.preventDefault();
+})
+
+
+
+$("a.js-open-viewer").magnificPopup({
+    type: 'image',
+    closeOnContentClick: true,
+    mainClass: 'mfp-img-mobile',
+    image: {
+        verticalFit: true
+    },
+});
+

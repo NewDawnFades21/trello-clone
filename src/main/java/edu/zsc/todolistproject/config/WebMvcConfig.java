@@ -28,5 +28,4 @@ public class WebMvcConfig extends WebMvcConfigurerAdapter {
         super.addResourceHandlers(registry);
     }
 
-
 }

@@ -73,7 +73,8 @@ var TODO = (function (window) {
         "<div class='commenter'>{{userId}}</div>" +
         "<div class='comment_contents z-depth-1'>{{content}}</div>" +
         "<div class='comment_date'> {{formatTime createTime 'YYYY-MM-DD hh:mm:ss'}} </div>" +
-        "<div class='comment_reply'> Reply</div>" +
+        "<div class='comment_reply'> <a class='comment_edit'>edit</a></div>" +
+        "<div class='comment_reply'> <a class='comment_delete'>delete</a></div>" +
         "</div>";
 
     var comment_template = Handlebars.compile(comment_html);
@@ -201,7 +202,7 @@ var TODO = (function (window) {
             success: function (res) {
                 console.log("comment:"+res)
                 $(comment_template(res)).appendTo(".comments")
-                $(".comment_contents").val("")
+                $("#main_comment").val("")
             },
             error: function (jqXHR, textStatus, errorThrown) {
                 // $("#result").html(jqXHR.responseText);

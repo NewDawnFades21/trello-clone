@@ -1,10 +1,7 @@
 package edu.zsc.todolistproject.mapper;
 
 import edu.zsc.todolistproject.domain.Comment;
-import org.apache.ibatis.annotations.Insert;
-import org.apache.ibatis.annotations.Mapper;
-import org.apache.ibatis.annotations.Options;
-import org.apache.ibatis.annotations.Select;
+import org.apache.ibatis.annotations.*;
 
 import java.util.List;
 
@@ -19,4 +16,13 @@ public interface CommentMapper {
 
     @Select("select * from comment where card_id=#{cardId}")
     List<Comment> getCommentsByCardId(Long cardId);
+
+    @Select("select * from comment where id = #{id}")
+    Comment getCommentById(Long id);
+
+    @Update("update comment set content = #{content},modified = #{modified} where id = #{id}")
+    int editComment(Comment comment);
+
+    @Delete("delete from comment where id = #{id}")
+    int deleteComment(Long id);
 }

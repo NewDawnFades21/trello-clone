@@ -1,6 +1,7 @@
 <!DOCTYPE html>
 <html lang="en" xmlns:th="http://www.thymeleaf.org">
 <head th:replace="fragments/layout :: header"></head>
+
 <body>
 <!-- Modal Structure -->
 <div id="modalLayer" class="z-depth-1 modal-body" th:fragment="modal(user)">
@@ -21,7 +22,7 @@
         <p>Add comment</p>
         <div class="comment_frame">
             <input type="hidden" name="userId" th:value="${user.id}">
-            <textarea class="comment_contents z-depth-1" placeholder="Write a comment..." id="comment_content"></textarea>
+            <textarea class="comment_contents z-depth-1" placeholder="Write a comment..." id="main_comment"></textarea>
         </div>
         <div class="comment_send">Send</div>
         </br>
@@ -93,6 +94,8 @@
 
     </div>
 </div>
+
+
 
 <footer th:replace="fragments/layout :: footer"></footer>
 </body>
