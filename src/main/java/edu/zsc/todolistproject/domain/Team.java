@@ -8,7 +8,7 @@ import java.util.List;
 public class Team {
     private Long id;
     private String title;
-    private TeamType type;
+    private int typeId;
     private String description;
     private List<Board> boardList;
 
