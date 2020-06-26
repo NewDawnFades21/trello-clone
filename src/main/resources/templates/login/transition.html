@@ -1,0 +1,27 @@
+﻿<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="en">
+<head>
+<meta charset="UTF-8">
+<title>科技感Loading加载动画特效</title>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+
+<link rel="stylesheet" th:href="@{/css/transition.css}" href="../../static/css/transition.css">
+
+</head>
+<body>
+
+<div>
+    <p id="text"style="display: none;font-size: 1.5em"><a th:href="@{/login}" style="text-decoration: none">LOGIN</a></p>
+
+     <p id="loading" style="font-size: 2em">loading。。。</p>
+</div>
+<script src="https://libs.baidu.com/jquery/1.10.2/jquery.min.js"></script>
+<script type="text/javascript">
+	jQuery(document).ready(function(){
+        $("#loading").slideUp(2000);
+
+		$("#text").slideDown(6000);
+	});
+</script>
+</body>
+</html>

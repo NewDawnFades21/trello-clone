@@ -8,9 +8,13 @@ spring:
     password: 123456
   thymeleaf:
     cache: false
+
 mybatis:
   configuration:
     map-underscore-to-camel-case: true
+    use-generated-keys: true
+  mapper-locations: classpath:edu.zsc.todolistproject/*.xml
 server:
   tomcat:
     max-swallow-size: -1
+  port: 8089

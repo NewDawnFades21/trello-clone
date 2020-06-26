@@ -3,6 +3,13 @@
 <header th:replace="fragments/layout :: header"></header>
 <body>
 
+<!--//导航栏-->
+<header th:insert="fragments/layout2::header">
+    <link rel="stylesheet" th:href="@{/site/css/mysite.css}"  href="../../static/site/css/mysite.css">
+    <link rel="stylesheet" th:href="@{/bootstrap4/assets/metismenu/metisMenu.min.css}" href="../../static/bootstrap4/assets/metismenu/metisMenu.min.css">
+    <link rel="stylesheet" th:href="@{/bootstrap4/assets/metismenu/mm-vertical.css}" href="../../static/bootstrap4/assets/metismenu/mm-vertical.css">
+</header>
+
 <div id="board_info">
     <div class="project_name">[[${board.title}]]</div>
 </div>

@@ -5,6 +5,7 @@ import edu.zsc.todolistproject.domain.Board;
 import edu.zsc.todolistproject.domain.Deck;
 import edu.zsc.todolistproject.mapper.DeckMapper;
 import edu.zsc.todolistproject.mapper.BoardMapper2;
+import edu.zsc.todolistproject.service.DeckService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -18,7 +19,7 @@ import java.util.Date;
 @Controller
 public class DeckController {
     @Autowired
-    private DeckMapper deckMapper;
+    private DeckService deckService;
 
     @Autowired
     private BoardMapper2 boardMapper2;
@@ -28,13 +29,13 @@ public class DeckController {
         Deck deck = new Deck();
         deck.setTitle(title);
         deck.setBoardId(boardId);
-        deckMapper.insertDeck(deck);
+        deckService.insertDeck(deck);
         return new ResponseEntity<String>("添加成功", HttpStatus.OK);
     }
 
     @PutMapping("/deck/update")
     public ResponseEntity<?> updateDeck(Deck deck) {
-        deckMapper.updateDeck(deck);
+        deckService.updateDeck(deck);
         return new ResponseEntity<String>("添加成功", HttpStatus.OK);
     }
 

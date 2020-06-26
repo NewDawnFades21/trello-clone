@@ -9,8 +9,8 @@ import java.util.List;
 public interface CommentMapper {
 
     @Options(useGeneratedKeys = true,keyProperty = "id")
-    @Insert("insert into comment (card_id,content,create_time,user_id) values" +
-            "(#{cardId},#{content},#{createTime},#{userId})")
+    @Insert("insert into comment (card_id,content,create_time,user_id,modified) values" +
+            "(#{cardId},#{content},#{createTime},#{userId},#{modified})")
     int addComment(Comment comment);
 
 

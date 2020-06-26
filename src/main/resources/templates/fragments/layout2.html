@@ -1,5 +1,6 @@
 <!DOCTYPE html>
-<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<html lang="en" xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="https://www.thymeleaf.org/thymeleaf-extras-springsecurity5">
 <head th:fragment="head">
     <meta charset="UTF-8">
     <title>看板</title>
@@ -53,6 +54,10 @@
             </li>
         </ul>
         <ul class="nav navbar-nav navbar-right">
+            <!--emmmm這裏有bug-->
+<!--            <div sec:authorize="isAuthenticated()">-->
+<!--                Logged user:<span sec:authentication="name"> The value of the "name" property of the authentication object should appear here.</span></div>-->
+<!--            Roles: <span sec:authentication="principal.authorities">[ROLE_USER, ROLE_ADMIN]</span>-->
             <li class="nav-item dropdown">
                 <a class="nav-link dropdown-toggle active"  href="#" id="navbarDropdownMenuLink" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                     <svg class="bi bi-plus" width="1.5em" height="1.5em" viewBox="0 0 16 16" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
@@ -84,7 +89,8 @@
                             <path fill-rule="evenodd" d="M3 14s-1 0-1-1 1-4 6-4 6 3 6 4-1 1-1 1H3zm5-6a3 3 0 1 0 0-6 3 3 0 0 0 0 6z" clip-rule="evenodd"/>
                         </svg>
                 </a>
-                <div class="dropdown-menu" aria-labelledby="navbarDropdownMenuLink">
+<!--                改过style-->
+                <div class="dropdown-menu" aria-labelledby="navbarDropdownMenuLink" style="margin-left: -90px">
                     <a class="dropdown-item" href="#">
                         <svg class="bi bi-person" width="1em" height="1em" viewBox="0 0 16 16" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
                             <path fill-rule="evenodd" d="M13 14s1 0 1-1-1-4-6-4-6 3-6 4 1 1 1 1h10zm-9.995-.944v-.002.002zM3.022 13h9.956a.274.274 0 0 0 .014-.002l.008-.002c-.001-.246-.154-.986-.832-1.664C11.516 10.68 10.289 10 8 10c-2.29 0-3.516.68-4.168 1.332-.678.678-.83 1.418-.832 1.664a1.05 1.05 0 0 0 .022.004zm9.974.056v-.002.002zM8 7a2 2 0 1 0 0-4 2 2 0 0 0 0 4zm3-2a3 3 0 1 1-6 0 3 3 0 0 1 6 0z" clip-rule="evenodd"/>
@@ -292,7 +298,7 @@
 <footer class="footer mt-auto py-3" th:fragment="footer">
     <hr>
     <div class="text-center">
-        <span class="text-muted">by 同路人</span>
+        <span class="text-muted" style="font-family: 宋体;">Copyright&copy;版权归云词云plus所有</span>
     </div>
 
     <script th:src="@{/bootstrap4/js/jquery.min.js}" src="../../static/bootstrap4/js/jquery.min.js"></script>
@@ -331,12 +337,12 @@
         <div class="collapse navbar-collapse" id="navbarSupportedContent2">
             <ul class="nav navbar-nav navbar-right">
                 <li class="nav-item active">
-                    <a class="nav-link" href="/notebook/login">
+                    <a class="nav-link" href="/login">
                         登录
                     </a>
                 </li>
                 <li class="nav-item active">
-                    <a class="nav-link" href="/notebook/register">
+                    <a class="nav-link" href="/register">
                         注册
                     </a>
                 </li>

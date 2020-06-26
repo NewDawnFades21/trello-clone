@@ -70,11 +70,13 @@ var TODO = (function (window) {
         "</p>"
         "</div>";
     var comment_html = "<div class='comment' id='comment{{id}}'>" +
-        "<div class='commenter'>{{userId}}</div>" +
-        "<div class='comment_contents z-depth-1'>{{content}}</div>" +
+        "<div class='commenter'>{{user.username}}</div>" +
+        "<div class='comment_contents z-depth-1'>{{{link content}}}</div>" +
+        "<div class='comment_send comment_edit_btn' style='display: none'>Update</div>"+
         "<div class='comment_date'> {{formatTime createTime 'YYYY-MM-DD hh:mm:ss'}} </div>" +
         "<div class='comment_reply'> <a class='comment_edit'>edit</a></div>" +
         "<div class='comment_reply'> <a class='comment_delete'>delete</a></div>" +
+        "<div class='comment_reply'> <a class='comment_huifu'>reply</a></div>" +
         "</div>";
 
     var comment_template = Handlebars.compile(comment_html);
@@ -188,14 +190,12 @@ var TODO = (function (window) {
     }
 
     function add_comment(e) {
-        var user_id = $(".comment_frame").find("input[name='userId']").val()
         var card_id = $(".card_title_in_modal").find("input[name='id']").val();
-        var content = $("#comment_content").val()
+        var content = $("#main_comment").val()
         $.ajax({
             url: "/comment/add",
             type: "POST",
             data: {
-                "userId": user_id,
                 "cardId": card_id,
                 "content": content
             },

@@ -103,10 +103,21 @@ $(document).on("click",".layui-layer-btn",function (e) {
 })
 
 $(document).on("click",".comment_edit",function (e) {
-    var content = $(e.target).closest(".comment").find(".comment_contents").text();
-    var replace_html = "<textarea class='comment_contents sub_comment z-depth-1'>"+content+"</textarea>" +
-        "<div class='comment_send comment_edit_btn'>Update</div>";
-    $(e.target).closest(".comment").find(".comment_contents").replaceWith(replace_html);
+    var display = $(e.target).closest(".comment").find(".comment_edit_btn").css("display")
+    if(display!="none")
+    {
+        var content = $(e.target).closest(".comment").find(".comment_contents").text();
+        var replace_html = "<div class='comment_contents z-depth-1'>"+content+"</div>";
+        $(e.target).closest(".comment").find(".comment_contents").replaceWith(replace_html);
+
+        $(e.target).closest(".comment").find(".comment_edit_btn").attr("style", "display:none");
+    }else {
+        var content = $(e.target).closest(".comment").find(".comment_contents").text();
+        var replace_html = "<textarea class='comment_contents sub_comment z-depth-1'>"+content+"</textarea>";
+        $(e.target).closest(".comment").find(".comment_contents").replaceWith(replace_html);
+        $(e.target).closest(".comment").find(".comment_edit_btn").attr("style", "display:block");
+
+    }
 })
 
 $(document).on("click",".comment_edit_btn",function (e) {
@@ -125,8 +136,12 @@ $(document).on("click",".comment_edit_btn",function (e) {
                 var replace_html = "<div class='comment_contents z-depth-1'>"+content+"</div>"
                 $(e.target).closest(".comment").find(".comment_contents").replaceWith(replace_html);
                 $(e.target).remove();
-            }else {
+            }else if (res == 0) {
                 layer.msg("更新失败，未知错误", {time:1000, icon:5, shift:6}, function () {
+
+                });
+            }else {
+                layer.msg(res, {time:1000, icon:5, shift:6}, function () {
 
                 });
             }
@@ -154,6 +169,20 @@ $(document).on("click",".comment_delete",function (e) {
         layer.close(cindex);
     });
 
+})
+
+/**
+ * 回復功能
+ */
+$(document).on("click",".comment_huifu",function (e) {
+    var comment_ele = $(e.target).closest(".comment");
+    var user_reply_to = $(comment_ele).find(".commenter").text();
+    var main = $("#main_comment")
+    //連接到個人信息界面,emmmmm
+    // main.val("reply to <a href='#'>"+user_reply_to+"</a>:");
+    main.val("reply to "+user_reply_to+":");
+    $("#main_comment").focus();
+    $("#main_comment").replaceWith(main);
 })
 
 $(document).on("click","a.js-open-viewer",function (e) {

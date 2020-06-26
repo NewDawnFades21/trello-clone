@@ -12,4 +12,6 @@ public class User {
     private String password;
     private String introduction;
     private Date registerDate;
+    private List<String> authorities;
+    private String email;
 }
