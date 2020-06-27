@@ -9,8 +9,10 @@ import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.cache.annotation.CachePut;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
+//@Transactional
 @Service
 //@CacheConfig(cacheNames = "decks")
 public class DeckServiceImpl implements DeckService {
@@ -40,7 +42,7 @@ public class DeckServiceImpl implements DeckService {
     }
 
 
-//    @Cacheable(key = "'decks_board'.concat(#boardId)",unless = "#result==null")
+//    @Cacheable(unless = "#result==null")
     @Override
     public List<Deck> getDecksByBoard(Long boardId) {
         return deckMapper.getDecksByBoard(boardId);

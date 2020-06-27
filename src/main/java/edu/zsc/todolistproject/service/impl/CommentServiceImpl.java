@@ -9,8 +9,10 @@ import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.cache.annotation.CachePut;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
+//@Transactional
 //@CacheConfig(cacheNames = "comments")
 @Service
 public class CommentServiceImpl implements CommentService {
@@ -21,7 +23,7 @@ public class CommentServiceImpl implements CommentService {
         return commentMapper.addComment(comment);
     }
 
-//    @Cacheable(key = "'comments_card'.concat(#cardId)",unless = "#result==null")
+//    @Cacheable(unless = "#result==null")
     @Override
     public List<Comment> getCommentsByCardId(Long cardId) {
         return commentMapper.getCommentsByCardId(cardId);

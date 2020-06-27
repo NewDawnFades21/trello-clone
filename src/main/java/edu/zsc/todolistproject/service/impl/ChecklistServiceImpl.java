@@ -8,8 +8,10 @@ import org.springframework.cache.annotation.CacheConfig;
 import org.springframework.cache.annotation.CachePut;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
+//@Transactional
 @Service
 //@CacheConfig(cacheNames = "checklists")
 public class ChecklistServiceImpl implements ChecklistService {
@@ -21,7 +23,7 @@ public class ChecklistServiceImpl implements ChecklistService {
         return checklistMapper.addChecklist(checklist);
     }
 
-//    @Cacheable(key = "'checlists_card'.concat(#cardId)",unless = "#result==null")
+//    @Cacheable(unless = "#result==null")
     @Override
     public List<Checklist> getChecklistsByCardId(Long cardId) {
         return checklistMapper.getChecklistsByCardId(cardId);

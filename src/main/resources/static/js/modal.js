@@ -106,13 +106,13 @@ $(document).on("click",".comment_edit",function (e) {
     var display = $(e.target).closest(".comment").find(".comment_edit_btn").css("display")
     if(display!="none")
     {
-        var content = $(e.target).closest(".comment").find(".comment_contents").text();
+        var content = $(e.target).closest(".comment").find(".comment_contents").html();
         var replace_html = "<div class='comment_contents z-depth-1'>"+content+"</div>";
         $(e.target).closest(".comment").find(".comment_contents").replaceWith(replace_html);
 
         $(e.target).closest(".comment").find(".comment_edit_btn").attr("style", "display:none");
     }else {
-        var content = $(e.target).closest(".comment").find(".comment_contents").text();
+        var content = $(e.target).closest(".comment").find(".comment_contents").html();
         var replace_html = "<textarea class='comment_contents sub_comment z-depth-1'>"+content+"</textarea>";
         $(e.target).closest(".comment").find(".comment_contents").replaceWith(replace_html);
         $(e.target).closest(".comment").find(".comment_edit_btn").attr("style", "display:block");
@@ -120,34 +120,7 @@ $(document).on("click",".comment_edit",function (e) {
     }
 })
 
-$(document).on("click",".comment_edit_btn",function (e) {
-    var id = $(e.target).closest(".comment").attr("id").slice(7)
-    var content = $(e.target).closest(".comment").find(".comment_contents").val();
-    $.ajax({
-        "type":"PUT",
-        "url":"/comment/edit",
-        "contentType": "application/json;charset=utf-8",
-        "data":JSON.stringify({
-            "id":id,
-            "content":content
-        }),
-        "success":function (res) {
-            if (res == 1) {
-                var replace_html = "<div class='comment_contents z-depth-1'>"+content+"</div>"
-                $(e.target).closest(".comment").find(".comment_contents").replaceWith(replace_html);
-                $(e.target).remove();
-            }else if (res == 0) {
-                layer.msg("更新失败，未知错误", {time:1000, icon:5, shift:6}, function () {
 
-                });
-            }else {
-                layer.msg(res, {time:1000, icon:5, shift:6}, function () {
-
-                });
-            }
-        }
-    })
-})
 $(document).on("click",".comment_delete",function (e) {
     var id = $(e.target).closest(".comment").attr("id").slice(7)
     layer.confirm("确认删除该评论？",  {icon: 3, title:'删除评论'}, function(cindex){
@@ -155,14 +128,14 @@ $(document).on("click",".comment_delete",function (e) {
         $.ajax({
             "type":"DELETE",
             "url":"/comment/delete/"+id,
-            "success":function (res) {
-                if (res == 1) {
-                    $(e.target).closest(".comment").remove();
-                }else {
-                    layer.msg("更新失败，未知错误", {time:1000, icon:5, shift:6}, function () {
-
-                    });
-                }
+            "contentType": "application/json;charset=utf-8",
+            "success": function (res) {
+                layer.msg(res, {time: 3000, icon: 5, shift: 6}, function () {
+                });
+            },
+            "error": function (xhr, status, error) {
+                layer.msg(xhr.responseText, {time: 3000, icon: 5, shift: 6}, function () {
+                });
             }
         })
     }, function(cindex){

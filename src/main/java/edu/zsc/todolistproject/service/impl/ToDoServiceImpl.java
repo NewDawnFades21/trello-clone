@@ -9,8 +9,10 @@ import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.cache.annotation.CachePut;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
+//@Transactional
 //@CacheConfig(cacheNames = "items")
 @Service
 public class ToDoServiceImpl implements ToDoService {
@@ -40,7 +42,7 @@ public class ToDoServiceImpl implements ToDoService {
         return toDoMapper.updateToDoItem(toDoItem);
     }
 
-//    @Cacheable(key = "'items_checklist'.concat(#checklistId)",unless = "#result==null")
+//    @Cacheable(unless = "#result==null")
     @Override
     public List<ToDoItem> getToDoItemsByChecklistId(Long checklistId) {
         return toDoMapper.getToDoItemsByChecklistId(checklistId);

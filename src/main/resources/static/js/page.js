@@ -43,7 +43,7 @@ var TODO = (function (window) {
 
     var attachment_html =
         "<div class='attachment-thumbnail' id='attachment{{id}}'>" +
-        "<a class='attachment-thumbnail-preview js-open-viewer attachment-thumbnail-preview-is-cover' href='/uploads/{{filename}}' target='_blank' title='{{filename}}' style='background-image: url(/uploads/{{filename}})'></a>"+
+        "<a class='attachment-thumbnail-preview js-open-viewer attachment-thumbnail-preview-is-cover' href='/uploads/{{filename}}' target='_blank' title='{{filename}}' style='background-image: url(/uploads/{{filename}})'></a>" +
         "<p class='attachment-thumbnail-details js-open-viewer'>" +
         "<span class='attachment-thumbnail-name'>{{filename}}</span>" +
         "<span class='attachment-thumbnail-details-title-options' style='display: block;'>" +
@@ -68,11 +68,11 @@ var TODO = (function (window) {
         "</span>" +
         "</span>" +
         "</p>"
-        "</div>";
+    "</div>";
     var comment_html = "<div class='comment' id='comment{{id}}'>" +
         "<div class='commenter'>{{user.username}}</div>" +
         "<div class='comment_contents z-depth-1'>{{{link content}}}</div>" +
-        "<div class='comment_send comment_edit_btn' style='display: none'>Update</div>"+
+        "<div class='comment_send comment_edit_btn' style='display: none'>Update</div>" +
         "<div class='comment_date'> {{formatTime createTime 'YYYY-MM-DD hh:mm:ss'}} </div>" +
         "<div class='comment_reply'> <a class='comment_edit'>edit</a></div>" +
         "<div class='comment_reply'> <a class='comment_delete'>delete</a></div>" +
@@ -98,6 +98,29 @@ var TODO = (function (window) {
         $(".list_header_name").on("change", change_deck_title);
         $(".attach_from_computer").on("click", file_upload);
         $(".comment_send").on("click", add_comment);
+        $(document).on("click", ".comment_edit_btn", function (e) {
+            var id = $(e.target).closest(".comment").attr("id").slice(7)
+            var content = $(e.target).closest(".comment").find(".comment_contents").val();
+            $.ajax({
+                "type": "PUT",
+                "url": "/comment/edit",
+                "contentType": "application/json;charset=utf-8",
+                "data": JSON.stringify({
+                    "id": id,
+                    "content": content
+                }),
+                "success": function (res) {
+
+                    $(e.target).closest(".comment").find(".comment_contents").replaceWith("<div class='comment_contents z-depth-1'>" + res.content + "</div>");
+                    $(e.target).closest(".comment").find(".comment_edit_btn").attr("style", "display:none");
+
+                },
+                "error": function (xhr, status, error) {
+                    layer.msg(xhr.responseText, {time: 3000, icon: 5, shift: 6}, function () {
+                    });
+                }
+            })
+        })
 
         $("#sortable").sortable({
             placeholder: "ui-state-highlight",
@@ -200,7 +223,7 @@ var TODO = (function (window) {
                 "content": content
             },
             success: function (res) {
-                console.log("comment:"+res)
+                console.log("comment:" + res)
                 $(comment_template(res)).appendTo(".comments")
                 $("#main_comment").val("")
             },
@@ -216,6 +239,30 @@ var TODO = (function (window) {
             }
         })
 
+    }
+
+    function edit_comment() {
+        var id = $(e.target).closest(".comment").attr("id").slice(7)
+        var content = $(e.target).closest(".comment").find(".comment_contents").val();
+        $.ajax({
+            "type": "PUT",
+            "url": "/comment/edit",
+            "contentType": "application/json;charset=utf-8",
+            "data": JSON.stringify({
+                "id": id,
+                "content": content
+            }),
+            "success": function (res) {
+                if (res == 1) {
+                    $(e.target).closest(".comment").find(".comment_contents").replaceWith($(comment_template(res)));
+                    $(e.target).closest(".comment").find(".comment_edit_btn").attr("style", "display:none");
+                } else if (res == 0) {
+                    layer.msg("更新失败，未知错误", {time: 1000, icon: 5, shift: 6}, function () {
+
+                    });
+                }
+            }
+        })
     }
 
     function addCheckList(e) {
@@ -356,7 +403,7 @@ var TODO = (function (window) {
 
 
     function getCardInfo(e) {
-        $(e.target).attr("visited",true)
+        $(e.target).attr("visited", true)
         var cardId = $(e.target).attr("cardId");
         if (cardId == null) {
             cardId = $(e.target).attr("id")
@@ -381,7 +428,7 @@ var TODO = (function (window) {
                 $(".comments").html("")
                 $("#checklists").html("")
                 $("#attachments").html("")
-                for (var i = 0; i < res.comments.length; i++){
+                for (var i = 0; i < res.comments.length; i++) {
                     $(comment_template(res.comments[i])).appendTo(".comments")
                 }
                 for (var i = 0; i < res.checklists.length; i++) {
@@ -389,12 +436,12 @@ var TODO = (function (window) {
                     var checklistId = res.checklists[i].id
                     $("#tablediv" + checklistId).load("/todo/buildToDoTable", {checklistId: checklistId})
                 }
-                for (var i = 0; i < res.attachments.length; i++){
+                for (var i = 0; i < res.attachments.length; i++) {
                     $(attachment_tamplate(res.attachments[i])).appendTo("#attachments");
                 }
             },
-            "error":function (res) {
-                layer.alert(res, function(index){
+            "error": function (res) {
+                layer.alert(res, function (index) {
                     // 回调方法
                     layer.close(index);
                 });
@@ -450,7 +497,7 @@ var TODO = (function (window) {
             success: function (card) {
                 $(".add_card_form").css('display', 'none');
                 var $list_wrapper = $(e.target).closest(".list_wrapper");
-                var str = card_template({"card_id":card.id,"value": card.title});
+                var str = card_template({"card_id": card.id, "value": card.title});
                 $list_wrapper.find(".list_cards").append(str);
                 $(e.target).parent(".add_card_form").find(".list_card_composer_textarea").val("");
                 $(e.target).parents(".card_composer").find("a.add_card").css('display', 'block');

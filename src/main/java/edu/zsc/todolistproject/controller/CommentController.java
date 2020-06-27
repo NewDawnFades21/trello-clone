@@ -10,6 +10,7 @@ import edu.zsc.todolistproject.mapper.UserMapper;
 import edu.zsc.todolistproject.service.CommentService;
 import edu.zsc.todolistproject.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
@@ -44,27 +45,33 @@ public class CommentController {
 
     @PutMapping("/comment/edit")
     public ResponseEntity<?> editComment(@RequestBody Map<String,Object> map){
-        Comment comment = commentService.getCommentById(Long.parseLong((String) map.get("id")));
+        long id = Long.parseLong((String)map.get("id"));
+        Comment comment = commentService.getCommentById(id);
         if (comment.getUserId()!=mySessionInfo.getCurrentUser().getId()){
-            return new ResponseEntity<>("不能修改別的用戶評論哦",HttpStatus.OK);
+            return new ResponseEntity<>("不能修改別的用戶評論哦",new HttpHeaders(), HttpStatus.BAD_REQUEST);
         }
-        comment.setContent(HtmlUtils.htmlEscape((String) map.get("content")));
+        comment.setContent((String) map.get("content"));
         comment.setModified(true);
         int res = commentService.editComment(comment);
         if (res == 1){
-            return new ResponseEntity<>(1,HttpStatus.OK);
+            return new ResponseEntity<>(comment,HttpStatus.OK);
         }else {
-            return new ResponseEntity<>(0,HttpStatus.SERVICE_UNAVAILABLE);
+            return new ResponseEntity<>("未知错误！",new HttpHeaders(), HttpStatus.BAD_REQUEST);
         }
     }
 
     @DeleteMapping("/comment/delete/{id}")
     public ResponseEntity<?> deleteComment(@PathVariable("id") Long id){
+        Comment comment = commentService.getCommentById(id);
+        Long userId = comment.getUserId();
+        if (mySessionInfo.getCurrentUser().getId()!=userId){
+            return new ResponseEntity<>("不能删除別的用戶評論哦",new HttpHeaders(),HttpStatus.BAD_REQUEST );
+        }
         int res = commentService.deleteComment(id);
         if (res == 1){
-            return new ResponseEntity<>(1,HttpStatus.OK);
+            return new ResponseEntity<>("删除成功",HttpStatus.OK);
         }else {
-            return new ResponseEntity<>(0,HttpStatus.SERVICE_UNAVAILABLE);
+            return new ResponseEntity<>("删除失败",HttpStatus.BAD_REQUEST);
         }
     }
 

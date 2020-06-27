@@ -9,8 +9,10 @@ import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.cache.annotation.CachePut;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
+//@Transactional
 @Service
 //@CacheConfig(cacheNames = "cards")
 public class CardServiceImpl implements CardService {
@@ -57,7 +59,7 @@ public class CardServiceImpl implements CardService {
 //        return null;
 //    }
 
-//    @Cacheable(key = "'card_deck_'.concat(#deckId)",unless = "#result==null")
+//    @Cacheable(unless = "#result==null")
     @Override
     public List<Card> getCardsByDeck(Long deckId) {
         return cardMapper.getCardsByDeck(deckId);

@@ -15,7 +15,7 @@ import java.util.Date;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
 
-@Transactional
+//@Transactional
 @Service
 //@CacheConfig(cacheNames = "user")
 public class UserServiceImpl implements UserService {
