@@ -11,19 +11,19 @@ import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
-@CacheConfig(cacheNames = "items")
+//@CacheConfig(cacheNames = "items")
 @Service
 public class ToDoServiceImpl implements ToDoService {
     @Autowired
     private ToDoMapper toDoMapper;
 
-    @Cacheable(key = "'item_'.concat(#id)")
+//    @Cacheable(key = "'item_'.concat(#id)")
     @Override
     public ToDoItem getToDoItemById(Long id) {
         return toDoMapper.getToDoItemById(id);
     }
 
-    @CacheEvict(key = "'item_'.concat(#id)")
+//    @CacheEvict(key = "'item_'.concat(#id)")
     @Override
     public int deleteToDoItemById(Long id) {
         return toDoMapper.deleteToDoItemById(id);
@@ -34,13 +34,13 @@ public class ToDoServiceImpl implements ToDoService {
         return toDoMapper.insertToDoItem(toDoItem);
     }
 
-    @CachePut(key = "'item_'.concat(#toDoItem.id)")
+//    @CachePut(key = "'item_'.concat(#toDoItem.id)")
     @Override
     public int updateToDoItem(ToDoItem toDoItem) {
         return toDoMapper.updateToDoItem(toDoItem);
     }
 
-    @Cacheable(key = "'items_checklist'.concat(#checklistId)",unless = "#result==null")
+//    @Cacheable(key = "'items_checklist'.concat(#checklistId)",unless = "#result==null")
     @Override
     public List<ToDoItem> getToDoItemsByChecklistId(Long checklistId) {
         return toDoMapper.getToDoItemsByChecklistId(checklistId);

@@ -179,8 +179,8 @@ $(document).on("click",".comment_huifu",function (e) {
     var user_reply_to = $(comment_ele).find(".commenter").text();
     var main = $("#main_comment")
     //連接到個人信息界面,emmmmm
-    // main.val("reply to <a href='#'>"+user_reply_to+"</a>:");
-    main.val("reply to "+user_reply_to+":");
+    main.val("reply to <a href='#'>"+user_reply_to+"</a>:");
+    // main.val("reply to "+user_reply_to+":");
     $("#main_comment").focus();
     $("#main_comment").replaceWith(main);
 })

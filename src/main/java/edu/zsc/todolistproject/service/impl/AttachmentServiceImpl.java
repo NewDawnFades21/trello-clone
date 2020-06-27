@@ -12,7 +12,7 @@ import org.springframework.stereotype.Service;
 
 import java.util.List;
 @Service
-@CacheConfig(cacheNames = "attachments")
+//@CacheConfig(cacheNames = "attachments")
 public class AttachmentServiceImpl implements AttachmentService {
     @Autowired
     private AttachmentMapper attachmentMapper;
@@ -21,25 +21,25 @@ public class AttachmentServiceImpl implements AttachmentService {
         return attachmentMapper.addAttachment(attachment);
     }
 
-    @Cacheable(key = "'attachment_'.concat(#result.id)",unless = "#result!=null")
+//    @Cacheable(key = "'attachment_'.concat(#result.id)",unless = "#result==null")
     @Override
     public List<Attachment> getAttachmentsByCardId(Long cardId) {
         return attachmentMapper.getAttachmentsByCardId(cardId);
     }
 
-    @CacheEvict(key = "'attachment_'.concat(#id)",condition = "#id!=null")
+//    @CacheEvict(key = "'attachment_'.concat(#id)",condition = "#id!=null")
     @Override
     public int deleteById(Long id) {
         return attachmentMapper.deleteById(id);
     }
 
-    @Cacheable(key = "'attachment_'.concat(#id)",unless = "#result==null")
+//    @Cacheable(key = "'attachment_'.concat(#id)",unless = "#result==null")
     @Override
     public Attachment getAttachmentsById(Long id) {
         return attachmentMapper.getAttachmentsById(id);
     }
 
-    @CachePut(key = "'attachment_'.concat(#attachment.id)",unless = "#result==null")
+//    @CachePut(key = "'attachment_'.concat(#attachment.id)",unless = "#result==null")
     @Override
     public int updateAttachment(Attachment attachment) {
         return attachmentMapper.updateAttachment(attachment);

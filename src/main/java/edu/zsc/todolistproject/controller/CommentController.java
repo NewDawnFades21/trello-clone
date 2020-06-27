@@ -15,6 +15,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.util.MultiValueMap;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.util.HtmlUtils;
 
 import javax.servlet.http.HttpServletRequest;
 import java.util.Date;
@@ -32,6 +33,7 @@ public class CommentController {
     @PostMapping("/comment/add")
     public ResponseEntity<Comment> addComment(HttpServletRequest request,Comment comment) {
         comment.setCreateTime(new Date());
+//        comment.setContent(HtmlUtils.htmlEscape(comment.getContent())); 不要这个
         comment.setModified(false);
         comment.setUser(mySessionInfo.getCurrentUser());
         comment.setUserId(mySessionInfo.getCurrentUser().getId());
@@ -46,7 +48,7 @@ public class CommentController {
         if (comment.getUserId()!=mySessionInfo.getCurrentUser().getId()){
             return new ResponseEntity<>("不能修改別的用戶評論哦",HttpStatus.OK);
         }
-        comment.setContent((String) map.get("content"));
+        comment.setContent(HtmlUtils.htmlEscape((String) map.get("content")));
         comment.setModified(true);
         int res = commentService.editComment(comment);
         if (res == 1){

@@ -11,7 +11,7 @@ import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
-@CacheConfig(cacheNames = "comments")
+//@CacheConfig(cacheNames = "comments")
 @Service
 public class CommentServiceImpl implements CommentService {
     @Autowired
@@ -21,25 +21,25 @@ public class CommentServiceImpl implements CommentService {
         return commentMapper.addComment(comment);
     }
 
-    @Cacheable(key = "'comments_card'.concat(#cardId)",unless = "#result==null")
+//    @Cacheable(key = "'comments_card'.concat(#cardId)",unless = "#result==null")
     @Override
     public List<Comment> getCommentsByCardId(Long cardId) {
         return commentMapper.getCommentsByCardId(cardId);
     }
 
-    @Cacheable(key = "'comment_'.concat(#id)",unless = "#result==null")
+//    @Cacheable(key = "'comment_'.concat(#id)",unless = "#result==null")
     @Override
     public Comment getCommentById(Long id) {
         return commentMapper.getCommentById(id);
     }
 
-    @CachePut(key = "'comment_'.concat(#comment.id)",unless = "#result==0")
+//    @CachePut(key = "'comment_'.concat(#comment.id)",unless = "#result==0")
     @Override
     public int editComment(Comment comment) {
         return commentMapper.editComment(comment);
     }
 
-    @CacheEvict(key = "'comment_'.concat(#id)")
+//    @CacheEvict(key = "'comment_'.concat(#id)")
     @Override
     public int deleteComment(Long id) {
         return commentMapper.deleteComment(id);

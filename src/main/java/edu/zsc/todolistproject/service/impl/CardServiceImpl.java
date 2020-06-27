@@ -12,18 +12,18 @@ import org.springframework.stereotype.Service;
 
 import java.util.List;
 @Service
-@CacheConfig(cacheNames = "cards")
+//@CacheConfig(cacheNames = "cards")
 public class CardServiceImpl implements CardService {
     @Autowired
     private CardMapper cardMapper;
 
-    @Cacheable(key = "'card_'.concat(#id)",unless = "#result==null")
+//    @Cacheable(key = "'card_'.concat(#id)",unless = "#result==null")
     @Override
     public Card getCardById(Long id) {
         return cardMapper.getCardById(id);
     }
 
-    @CacheEvict(key = "'card_'.concat(#id)")
+//    @CacheEvict(key = "'card_'.concat(#id)")
     @Override
     public int deleteCardById(Long id) {
         return cardMapper.deleteCardById(id);
@@ -34,7 +34,7 @@ public class CardServiceImpl implements CardService {
         return cardMapper.insertCard(card);
     }
 
-    @CachePut(key = "'card_'.concat(#card.id)",unless = "#result==0")
+//    @CachePut(key = "'card_'.concat(#card.id)",unless = "#result==0")
     @Override
     public int updateCard(Card card) {
         return cardMapper.updateCard(card);
@@ -57,7 +57,7 @@ public class CardServiceImpl implements CardService {
 //        return null;
 //    }
 
-    @Cacheable(key = "'card_deck_'.concat(#deckId)",unless = "#result==null")
+//    @Cacheable(key = "'card_deck_'.concat(#deckId)",unless = "#result==null")
     @Override
     public List<Card> getCardsByDeck(Long deckId) {
         return cardMapper.getCardsByDeck(deckId);

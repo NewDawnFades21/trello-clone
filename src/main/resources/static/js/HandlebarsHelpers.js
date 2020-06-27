@@ -5,8 +5,6 @@ Handlebars.registerHelper('formatTime', function (date, format) {
 
 Handlebars.registerHelper('link', function(my_link) {
 
-    var url = Handlebars.escapeExpression(my_link);
-
-    return new Handlebars.SafeString(url);
+    return new Handlebars.SafeString(my_link);
 
 });

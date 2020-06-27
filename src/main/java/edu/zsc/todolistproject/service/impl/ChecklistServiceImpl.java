@@ -11,7 +11,7 @@ import org.springframework.stereotype.Service;
 
 import java.util.List;
 @Service
-@CacheConfig(cacheNames = "checklists")
+//@CacheConfig(cacheNames = "checklists")
 public class ChecklistServiceImpl implements ChecklistService {
 
     @Autowired
@@ -21,19 +21,19 @@ public class ChecklistServiceImpl implements ChecklistService {
         return checklistMapper.addChecklist(checklist);
     }
 
-    @Cacheable(key = "'checlists_card'.concat(#cardId)",unless = "#result==null")
+//    @Cacheable(key = "'checlists_card'.concat(#cardId)",unless = "#result==null")
     @Override
     public List<Checklist> getChecklistsByCardId(Long cardId) {
         return checklistMapper.getChecklistsByCardId(cardId);
     }
 
-    @Cacheable(key = "'checklist_'.concat(#id)",unless = "#result==null")
+//    @Cacheable(key = "'checklist_'.concat(#id)",unless = "#result==null")
     @Override
     public Checklist getChecklistById(Long id) {
         return checklistMapper.getChecklistById(id);
     }
 
-    @CachePut(key = "'checklist_'.concat(#id)",unless = "#result==null")
+//    @CachePut(key = "'checklist_'.concat(#id)",unless = "#result==null")
     @Override
     public int updateChecklistPercent(int percent, Long id) {
         return checklistMapper.updateChecklistPercent(percent, id);

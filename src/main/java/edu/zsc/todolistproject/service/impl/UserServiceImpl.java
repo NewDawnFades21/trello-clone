@@ -17,14 +17,14 @@ import java.util.concurrent.TimeUnit;
 
 @Transactional
 @Service
-@CacheConfig(cacheNames = "user")
+//@CacheConfig(cacheNames = "user")
 public class UserServiceImpl implements UserService {
     @Autowired
     private UserMapper userMapper;
     @Autowired
     RedisTemplate redisTemplate;
 
-    @Cacheable(key = "'user_'.concat(#id)",unless = "#result==null")
+//    @Cacheable(key = "'user_'.concat(#id)",unless = "#result==null")
     @Override
     public User getUserById(long id) {
         return userMapper.getUserById(id);
@@ -39,7 +39,7 @@ public class UserServiceImpl implements UserService {
 //    public User findByUsernamePassWord(String username, String password) {
 //        return userMapper.get;
 //    }
-    @Cacheable(key = "'user_'.concat(#result.id)",unless = "#result==null")
+//    @Cacheable(key = "'user_'.concat(#result.id)",unless = "#result==null")
     @Override
     public User getUserByUsername(String s) {
         return userMapper.getUserByUsername(s);
@@ -50,7 +50,7 @@ public class UserServiceImpl implements UserService {
 //        return 0;
 //    }
 
-    @CachePut(key = "'user_'.concat(#user.id)")
+//    @CachePut(key = "'user_'.concat(#user.id)")
     @Override
     public int updateUserPassword(User user) {
         return userMapper.updateUserPassword(user);
@@ -61,25 +61,25 @@ public class UserServiceImpl implements UserService {
         return userMapper.register(user);
     }
 
-    @Cacheable(key = "'user_'.concat(#username)",unless = "#result==null")
+//    @Cacheable(key = "'user_'.concat(#username)",unless = "#result==null")
     @Override
     public List<String> checkUsernameIsExist(String username) {
         return userMapper.checkUsernameIsExist(username);
     }
 
-    @Cacheable(key = "'user_'.concat(#email)",unless = "#result==null")
+//    @Cacheable(key = "'user_'.concat(#email)",unless = "#result==null")
     @Override
     public List<User> getUserByEmail(String email) {
         return userMapper.getUserByEmail(email);
     }
 
-    @Cacheable(key = "'user_'.concat(#email)",unless = "#result==null")
+//    @Cacheable(key = "'user_'.concat(#email)",unless = "#result==null")
     @Override
     public String getUsernameByEmail(String email) {
         return userMapper.getUsernameByEmail(email);
     }
 
-    @CachePut(key = "'user_'.concat(#user.id)")
+//    @CachePut(key = "'user_'.concat(#user.id)")
     @Override
     public int changPwdByEmail(User user) {
         return userMapper.changPwdByEmail(user);

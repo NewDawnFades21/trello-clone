@@ -11,18 +11,18 @@ import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
 
 @Service
-@CacheConfig(cacheNames = "boards")
+//@CacheConfig(cacheNames = "boards")
 public class BoardServiceImpl implements BoardService {
 
     @Autowired
     private BoardMapper boardMapper;
     @Override
-    @Cacheable(key = "'board_'.concat(#id)",unless = "#result==null")
+//    @Cacheable(key = "'board_'.concat(#id)",unless = "#result==null")
     public Board getBoardById(Long id) {
         return boardMapper.getBoardById(id);
     }
 
-    @CacheEvict(key = "'board_'.concat(#id)")
+//    @CacheEvict(key = "'board_'.concat(#id)")
     @Override
     public int deleteBoardById(Long id) {
         return boardMapper.deleteBoardById(id);
@@ -33,7 +33,7 @@ public class BoardServiceImpl implements BoardService {
         return boardMapper.insertBoard(board);
     }
 
-    @CachePut(key = "'board_'.concat(#board.id)")
+//    @CachePut(key = "'board_'.concat(#board.id)")
     @Override
     public int updateBoard(Board board) {
         return boardMapper.updateBoard(board);
