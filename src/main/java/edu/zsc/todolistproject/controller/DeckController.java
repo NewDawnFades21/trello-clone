@@ -6,7 +6,9 @@ import edu.zsc.todolistproject.domain.Deck;
 import edu.zsc.todolistproject.mapper.DeckMapper;
 import edu.zsc.todolistproject.mapper.BoardMapper2;
 import edu.zsc.todolistproject.service.DeckService;
+import org.apache.ibatis.annotations.Delete;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
@@ -29,8 +31,10 @@ public class DeckController {
         Deck deck = new Deck();
         deck.setTitle(title);
         deck.setBoardId(boardId);
-        deckService.insertDeck(deck);
-        return new ResponseEntity<String>("添加成功", HttpStatus.OK);
+        int i = deckService.insertDeck(deck);
+        if (i == 1)
+            return new ResponseEntity<>(deck, HttpStatus.OK);
+        return new ResponseEntity<>("未知錯誤",new HttpHeaders(), HttpStatus.BAD_REQUEST);
     }
 
     @PutMapping("/deck/update")
@@ -39,7 +43,14 @@ public class DeckController {
         return new ResponseEntity<String>("添加成功", HttpStatus.OK);
     }
 
-
+    @DeleteMapping("/deck/delete/{id}")
+    public ResponseEntity<?> deleteDeck(@PathVariable("id") Long id){
+        int res = deckService.deleteDeckById(id);
+        if (res == 1)
+            return new ResponseEntity<>("删除成功",HttpStatus.OK);
+        else
+            return new ResponseEntity<>("删除失败",new HttpHeaders(),HttpStatus.BAD_REQUEST );
+    }
 // -----------------------   李-----------------------------
     @GetMapping("/deck")
     public String deckview(@RequestParam Long id, Model model) {

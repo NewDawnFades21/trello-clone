@@ -8,6 +8,9 @@ import edu.zsc.todolistproject.mapper.UserMapper;
 import edu.zsc.todolistproject.service.ChecklistService;
 import edu.zsc.todolistproject.service.ToDoService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
@@ -69,5 +72,13 @@ public class ToDoController {
         checklist.setPercent(getPercent(items));
         model.addAttribute("checklist", checklist);
         return "fragments/toDoTable :: todotable";
+    }
+
+    @DeleteMapping("/todoItem/delete/{id}")
+    public ResponseEntity<?> deleteTodoItem(@PathVariable("id") Long id){
+        int res = toDoService.deleteToDoItemById(id);
+        if (res == 1)
+            return new ResponseEntity<>("删除成功", HttpStatus.OK);
+        return new ResponseEntity<>("删除失败",new HttpHeaders(),HttpStatus.BAD_REQUEST );
     }
 }

@@ -40,4 +40,9 @@ public class ChecklistServiceImpl implements ChecklistService {
     public int updateChecklistPercent(int percent, Long id) {
         return checklistMapper.updateChecklistPercent(percent, id);
     }
+
+    @Override
+    public int deleteChecklistById(Long id) {
+        return checklistMapper.deleteChecklistById(id);
+    }
 }

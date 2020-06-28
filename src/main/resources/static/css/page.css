@@ -794,5 +794,34 @@ html > body #sortable li {
 /*    font-size: 14px;*/
 /*    margin-bottom: 8px;*/
 /*}*/
+p:hover .checklist_del{display:block;}
+p .checklist_del{
+    display:none;
+    padding:3px;
+    line-height:8px;
+    cursor:pointer;
+    position:absolute;
+    right:0px;
+    top:0px;
+}
 
-
+.list_card_detail:hover span{display: block}
+.list_card_detail span{
+    display:none;
+    padding:3px;
+    line-height:8px;
+    cursor:pointer;
+    position:absolute;
+    right:0px;
+    top:0px;
+}
+.list_header:hover span{display: block}
+.list_header span{
+    display:none;
+    padding:3px;
+    line-height:8px;
+    cursor:pointer;
+    position:absolute;
+    right:0px;
+    top:0px;
+}

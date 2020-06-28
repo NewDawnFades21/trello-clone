@@ -47,4 +47,9 @@ public class ToDoServiceImpl implements ToDoService {
     public List<ToDoItem> getToDoItemsByChecklistId(Long checklistId) {
         return toDoMapper.getToDoItemsByChecklistId(checklistId);
     }
+
+    @Override
+    public int deleteToDoItemByChecklistId(Long id) {
+        return toDoMapper.deleteToDoItemByChecklistId(id);
+    }
 }

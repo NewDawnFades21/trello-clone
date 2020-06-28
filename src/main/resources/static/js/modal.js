@@ -7,6 +7,13 @@ $(".card_title_in_modal").on("change", "input", function () {
         data: {
             "title": card_title,
             "id": card_id,
+        },
+        "success": function (card) {
+            $("#board_canvas").find("#card"+card.id).text(card.title)
+        },
+        "error": function (xhr, status, error) {
+            layer.msg(xhr.responseText, {time: 3000, icon: 5, shift: 6}, function () {
+            });
         }
     })
 })
@@ -89,7 +96,7 @@ $(document).on("click",".layui-layer-btn",function (e) {
         timeout: 1000000,
         success:function (res) {
             console.log(res)
-            layer.msg("更新成功", {time:1000, icon:5, shift:6}, function () {
+            layer.msg("更新成功", {time:1000, icon:1, shift:6}, function () {
 
                 $("#attachment"+id).find(".attachment-thumbnail-name").text(res.filename)
             });
@@ -130,7 +137,8 @@ $(document).on("click",".comment_delete",function (e) {
             "url":"/comment/delete/"+id,
             "contentType": "application/json;charset=utf-8",
             "success": function (res) {
-                layer.msg(res, {time: 3000, icon: 5, shift: 6}, function () {
+                layer.msg(res, {time: 3000, icon: 1, shift: 6}, function () {
+                    $(e.target).closest(".comment").remove();
                 });
             },
             "error": function (xhr, status, error) {
@@ -142,6 +150,30 @@ $(document).on("click",".comment_delete",function (e) {
         layer.close(cindex);
     });
 
+})
+
+//checklist刪除
+$(document).on("click",".checklist_del",function (e) {
+    var id = $(e.target).attr("id").slice(9);
+    layer.confirm("确认删除该清單？",  {icon: 3, title:'删除清單'}, function(cindex){
+        layer.close(cindex);
+        $.ajax({
+            "type":"DELETE",
+            "url":"/checklist/delete/"+id,
+            "contentType": "application/json;charset=utf-8",
+            "success": function (res) {
+                layer.msg(res, {time: 3000, icon: 5, shift: 6}, function () {
+                    $(e.target).closest(".checklistDiv").remove();
+                });
+            },
+            "error": function (xhr, status, error) {
+                layer.msg(xhr.responseText, {time: 3000, icon: 5, shift: 6}, function () {
+                });
+            }
+        })
+    }, function(cindex){
+        layer.close(cindex);
+    });
 })
 
 /**

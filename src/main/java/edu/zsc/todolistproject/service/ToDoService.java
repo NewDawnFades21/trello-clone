@@ -14,4 +14,6 @@ public interface ToDoService {
     int updateToDoItem(ToDoItem toDoItem);
 
     List<ToDoItem> getToDoItemsByChecklistId(Long checklistId);
+
+    int deleteToDoItemByChecklistId(Long id);
 }

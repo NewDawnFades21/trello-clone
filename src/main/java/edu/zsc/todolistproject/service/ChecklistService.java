@@ -12,4 +12,6 @@ public interface ChecklistService {
     Checklist getChecklistById(Long id);
 
     int updateChecklistPercent(int percent, Long id);
+
+    int deleteChecklistById(Long id);
 }

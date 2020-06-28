@@ -5,6 +5,7 @@ import edu.zsc.todolistproject.mapper.*;
 import edu.zsc.todolistproject.service.*;
 import javafx.scene.control.CheckMenuItem;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
@@ -42,7 +43,7 @@ public class CardController {
         try{
             card = getCardById(cardId);
         }catch (Exception e){
-
+            return new ResponseEntity<>(e.getMessage(),new HttpHeaders(), HttpStatus.BAD_REQUEST);
         }
         return new ResponseEntity<>(card, HttpStatus.OK);
     }
@@ -70,11 +71,14 @@ public class CardController {
     }
 
     @PutMapping("/card/update/title")
-    public ResponseEntity<String> updateCardTitle(long id, String title) {
+    public ResponseEntity<?> updateCardTitle(long id, String title) {
         Card card = cardService.getCardById(id);
         card.setTitle(title);
-        cardService.updateCard(card);
-        return new ResponseEntity<String>("update card title success", HttpStatus.OK);
+        int i = cardService.updateCard(card);
+        if (i == 1)
+            return new ResponseEntity<>(card, HttpStatus.OK);
+        return new ResponseEntity<>("未知錯誤",new HttpHeaders(),HttpStatus.BAD_REQUEST );
+
     }
 
     @PutMapping("/card/update/desc")
@@ -84,6 +88,14 @@ public class CardController {
         cardService.updateCard(card);
         return new ResponseEntity<String>("update card desc success", HttpStatus.OK);
 
+    }
+
+    @DeleteMapping("/card/delete/{id}")
+    public ResponseEntity<?> deleteCard(@PathVariable("id") Long id){
+        int res = cardService.deleteCardById(id);
+        if (res == 1)
+            return new ResponseEntity<>("删除成功",HttpStatus.OK);
+        return new ResponseEntity<>("删除失败",new HttpHeaders(),HttpStatus.BAD_REQUEST );
     }
 
 }

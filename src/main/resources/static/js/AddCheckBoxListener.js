@@ -42,9 +42,9 @@ $(document.body).on('submit', '.toDoCreateForm', (function () {
 }))
 
 
-$(".add_list_form").find(".save").on("click", function () {
-    var boardId = $(this).parents(".add_list_form").find("input[name='boardId']").val();
-    var title = $(this).parents(".add_list_form").find("#add_list").val();
+$(".add_list_form").find(".save").on("click", function (e) {
+    var boardId = $(e.target).parents(".add_list_form").find("input[name='boardId']").val();
+    var title = $(e.target).parents(".add_list_form").find("#add_list").val();
     $.ajax({
         url: "/deck/add",
         type: "POST",
@@ -52,43 +52,24 @@ $(".add_list_form").find(".save").on("click", function () {
             "title": title,
             "boardId": boardId
         },
-        success: function () {
-            console.log("添加成功")
+        success: function (deck) {
+            console.log("deck添加成功")
+        //    刷新頁面，不然有bug
+            location.reload();
         },
-        error: function () {
-            console.log("添加失败")
+        error: function (jqXHR, textStatus, errorThrown) {
+            // $("#result").html(jqXHR.responseText);
+            console.log("ERROR : ", jqXHR.responseText);
+            // $("#submitButton").prop("disabled", false);
+            layer.msg(jqXHR.responseText, {time: 2000, icon: 5, shift: 6}, function () {
+
+            });
+
         }
     })
 })
 
-// $(".add_card_form .card_save").on("click",function () {
-//     var self = $(this)
-//     var deckId = self.parent(".add_card_form").find("input[name='deckId']").val();
-//     var title = self.parent(".add_card_form").find(".list_card_composer_textarea").val();
-//     var userId = $("#userId").val()
-//     $.ajax({
-//         url:"/card/add",
-//         type:"POST",
-//         data:{
-//             "title":title,
-//             "deckId":deckId,
-//             "userId":userId
-//         },
-//         success:function (card) {
-//             console.log(card)
-//             $(".add_card_form").css('display', 'none');
-//             var card_text = $(e.target).parent(".add_card_form").find(".list_card_composer_textarea").val();
-//             var $list_wrapper = $(e.target).closest(".list_wrapper");
-//             var str = card_template({"value":card_text,"cardId":card.id});
-//             $list_wrapper.find(".list_cards").append(str);
-//             $(e.target).parent(".add_card_form").find(".list_card_composer_textarea").val("");
-//             $(e.target).parents(".card_composer").find("a.add_card").css('display', 'block');
-//         },
-//         error:function () {
-//             console.log("添加失败")
-//         }
-//     })
-// })
+
 
 
 

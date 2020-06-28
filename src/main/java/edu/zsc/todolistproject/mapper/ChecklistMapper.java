@@ -2,6 +2,7 @@ package edu.zsc.todolistproject.mapper;
 
 import edu.zsc.todolistproject.domain.Checklist;
 import org.apache.ibatis.annotations.*;
+import org.springframework.web.bind.annotation.DeleteMapping;
 
 import java.util.List;
 
@@ -14,9 +15,12 @@ public interface ChecklistMapper {
     @Select("select * from checklist where card_id = #{cardId}")
     List<Checklist> getChecklistsByCardId(Long cardId);
 
-    @Select("select * from checklist where id = ${id}")
+    @Select("select * from checklist where id = #{id}")
     Checklist getChecklistById(Long id);
 
-    @Update("update checklist set percent = #{percent} where id = ${id}")
+    @Update("update checklist set percent = #{percent} where id = #{id}")
     int updateChecklistPercent(int percent, Long id);
+
+    @Delete("delete from checklist where id = #{id}")
+    int deleteChecklistById(Long id);
 }
