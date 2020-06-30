@@ -1,14 +1,18 @@
 package edu.zsc.todolistproject.domain;
 
 import lombok.Data;
+import org.springframework.data.annotation.Id;
 
+import java.io.Serializable;
 import java.util.List;
 
+
 @Data
-public class Team {
+public class Team implements Serializable{
     private Long id;
     private String title;
-    private TeamType type;
+    private int typeId;
+    private TeamType teamType;
     private String description;
     private List<Board> boardList;
 
