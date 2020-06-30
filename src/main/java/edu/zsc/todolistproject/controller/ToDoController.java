@@ -5,7 +5,12 @@ import edu.zsc.todolistproject.domain.ToDoItem;
 import edu.zsc.todolistproject.mapper.ChecklistMapper;
 import edu.zsc.todolistproject.mapper.ToDoMapper;
 import edu.zsc.todolistproject.mapper.UserMapper;
+import edu.zsc.todolistproject.service.ChecklistService;
+import edu.zsc.todolistproject.service.ToDoService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
@@ -16,11 +21,9 @@ import java.util.List;
 @RequestMapping("/todo")
 public class ToDoController {
     @Autowired
-    UserMapper userMapper;
+    ToDoService toDoService;
     @Autowired
-    ToDoMapper toDoMapper;
-    @Autowired
-    ChecklistMapper checklistMapper;
+    ChecklistService checklistService;
 
     public int getPercent(List<ToDoItem> items) {
         int itemsCount = items.size();
@@ -39,8 +42,8 @@ public class ToDoController {
     public String buildToDoTable(@RequestParam(value = "checklistId", required = false) Long checklistId, Model model) {
         Checklist checklist = new Checklist();
         if (checklistId != null) {
-            checklist = checklistMapper.getChecklistById(checklistId);
-            List<ToDoItem> toDoItems = toDoMapper.getToDoItemsByChecklistId(checklistId);
+            checklist = checklistService.getChecklistById(checklistId);
+            List<ToDoItem> toDoItems = toDoService.getToDoItemsByChecklistId(checklistId);
             checklist.setToDoItemList(toDoItems);
         }
         model.addAttribute("checklist", checklist);
@@ -49,11 +52,11 @@ public class ToDoController {
 
     @PutMapping("/ajaxEdit")
     public String ajaxEdit(ToDoItem toDoItem, Model model) {
-        toDoMapper.updateToDoItem(toDoItem);
-        List<ToDoItem> items = toDoMapper.getToDoItemsByChecklistId(toDoItem.getChecklistId());
+        toDoService.updateToDoItem(toDoItem);
+        List<ToDoItem> items = toDoService.getToDoItemsByChecklistId(toDoItem.getChecklistId());
         int percent = getPercent(items);
-        Checklist checklist = checklistMapper.getChecklistById(toDoItem.getChecklistId());
-        checklistMapper.updateChecklistPercent(percent, toDoItem.getChecklistId());
+        Checklist checklist = checklistService.getChecklistById(toDoItem.getChecklistId());
+        checklistService.updateChecklistPercent(percent, toDoItem.getChecklistId());
         checklist.setToDoItemList(items);
         checklist.setPercent(percent);
         model.addAttribute("checklist", checklist);
@@ -62,12 +65,20 @@ public class ToDoController {
 
     @PostMapping("/ajaxCreate")
     public String ajaxCreate(ToDoItem toDoItem, Model model) {
-        toDoMapper.insertToDoItem(toDoItem);
-        List<ToDoItem> items = toDoMapper.getToDoItemsByChecklistId(toDoItem.getChecklistId());
-        Checklist checklist = checklistMapper.getChecklistById(toDoItem.getChecklistId());
+        toDoService.insertToDoItem(toDoItem);
+        List<ToDoItem> items = toDoService.getToDoItemsByChecklistId(toDoItem.getChecklistId());
+        Checklist checklist = checklistService.getChecklistById(toDoItem.getChecklistId());
         checklist.setToDoItemList(items);
         checklist.setPercent(getPercent(items));
         model.addAttribute("checklist", checklist);
         return "fragments/toDoTable :: todotable";
+    }
+
+    @DeleteMapping("/todoItem/delete/{id}")
+    public ResponseEntity<?> deleteTodoItem(@PathVariable("id") Long id){
+        int res = toDoService.deleteToDoItemById(id);
+        if (res == 1)
+            return new ResponseEntity<>("删除成功", HttpStatus.OK);
+        return new ResponseEntity<>("删除失败",new HttpHeaders(),HttpStatus.BAD_REQUEST );
     }
 }

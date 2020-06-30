@@ -2,12 +2,15 @@
 <html lang="en" xmlns:th="http://www.thymeleaf.org">
 <head th:fragment="header">
     <meta charset="utf-8">
+    <link rel="stylesheet" href="http://code.jquery.com/ui/1.11.4/themes/smoothness/jquery-ui.css">
     <link href="http://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
     <link type="text/css" rel="stylesheet" th:href="@{/css/materialize.min.css}" media="screen,projection"/>
     <link type="text/css" rel="stylesheet" th:href="@{/css/page.css}" media="screen,projection"/>
     <link type="text/css" rel="stylesheet" th:href="@{/css/todo.css}" media="screen,projection"/>
+    <link type="text/css" rel="stylesheet" th:href="@{/css/attachment.css}" media="screen,projection"/>
     <link href="/webjars/bootstrap/4.4.1-1/css/bootstrap.min.css" rel="stylesheet">
-    <link rel="stylesheet" href="http://code.jquery.com/ui/1.11.4/themes/smoothness/jquery-ui.css">
+    <link href="/webjars/Magnific-Popup/1.1.0/magnific-popup.css" rel="stylesheet">
+
 </head>
 <body>
 
@@ -19,9 +22,12 @@
     <script th:src="@{/lib/handlebars-v4.0.5.js}"></script>
     <script type="text/javascript" th:src="@{/lib/materialize.min.js}"></script>
     <script type="text/javascript" th:src="@{/js/page.js}"></script>
+    <script type="text/javascript" th:src="@{/js/moment.js}"></script>
+    <script type="text/javascript" th:src="@{/js/HandlebarsHelpers.js}"></script>
     <script type="text/javascript" th:src="@{/js/BuildTable.js}"></script>
     <script type="text/javascript" th:src="@{/js/AddCheckBoxListener.js}"></script>
     <script type="text/javascript" th:src="@{/js/modal.js}"></script>
+    <script src="/webjars/Magnific-Popup/1.1.0/jquery.magnific-popup.min.js"></script>
 </footer>
 </body>
 </html>

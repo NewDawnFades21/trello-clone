@@ -1,6 +1,7 @@
 <!DOCTYPE html>
 <html lang="en" xmlns:th="http://www.thymeleaf.org">
 <head th:replace="fragments/layout :: header"></head>
+
 <body>
 <!-- Modal Structure -->
 <div id="modalLayer" class="z-depth-1 modal-body" th:fragment="modal(user)">
@@ -9,44 +10,30 @@
             <input type="hidden" name="id" value="{{id}}">
             <input type="text" class="validate" name="title" value="{{title}}">
         </p>
+        <p>Description</p>
+        <div class="comment_frame">
+            <input type="hidden" name="userId" th:value="${user.id}">
+            <textarea class="comment_contents z-depth-1" placeholder="Write a description..." id="description_text"></textarea>
+        </div>
         <div class="list_name_wrapper">
             <span class="in_list">in list</span>
             <span class="list_name">{{list_name}}</span>
         </div>
-        <p>Add comment</p>
-        <div class="comment_frame">
-            <input type="hidden" name="userId" th:value="${user.id}">
-            <textarea class="comment_contents z-depth-1" placeholder="Write a comment..."></textarea>
-        </div>
-        <div class="comment_send">Send</div>
-        </br>
 
 
         <p>Activity</p>
-        <div class="comments" id="comments">
-            {{#Comments}}
-            <div class='comment'>
-                <div class='commenter'>{{user.username}}</div>
-                <div class='comment_contents z-depth-1'>{{content}}</div>
-                <div class='comment_date'>{{createTime}} -</div>
-                <div class='comment_reply'> Reply</div>
-            </div>
-            {{/Comments}}
+        <div class="comment_frame">
+            <input type="hidden" name="userId" th:value="${user.id}">
+            <textarea class="comment_contents z-depth-1" placeholder="Write a comment..." id="main_comment"></textarea>
+        </div>
+        <div class="comment_send">Send</div>
+        <div class="comments">
         </div>
         <div id="checklists">
-            {{#Checklists}}
-            <div class="checklistDiv">
-                <p>{{title}}</p>
-                <div class='tableDiv' id="tablediv{{id}}">
-                </div>
-                <form class='toDoCreateForm'>
-                    <input type='hidden' name='checklistId' value='{{id}}'>
-                    <input type='hidden' name='cardId' value='{{cardId}}'>
-                    <input class='add_item'>
-                    <div class='invalid-feedback'></div>
-                </form>
-            </div>
-            {{/Checklists}}
+        </div>
+        <p>Attachment</p>
+        <div id="attachments" class="js-attachment-list ui-sortable">
+
         </div>
     </div>
     <button type="button" class="close_button">X</button>
@@ -96,8 +83,7 @@
         <form class="modal_for_attachment z-depth-1" th:id="attach_form">
             <div class="attachment_btn_header">Attach</div>
             <input name="userId" type="hidden" th:value="${user.id}">
-            <input name="cardId" type="hidden" th:value="${param.cardId}">
-            <input type="file" id="fileUpload" name="file"/>
+            <input type="file" id="fileUpload" name="file" multiple/>
             <div class="attach_from_computer">Computer</div>
             <div class="attach_with_link">Attach a link</div>
             <input type="text" class="link_for_attachment" placeholder="Paste any link here..."/>
@@ -106,6 +92,8 @@
 
     </div>
 </div>
+
+
 
 <footer th:replace="fragments/layout :: footer"></footer>
 </body>

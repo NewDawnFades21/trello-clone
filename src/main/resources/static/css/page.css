@@ -334,7 +334,6 @@ body {
 }
 
 .list_card_detail .list_card_title {
-
     clear: both;
     display: block;
     font-weight: 400;
@@ -368,7 +367,22 @@ body {
     float: right;
     border: none;
     background-color: rgba(255, 255, 255, 0);
-    margin: 5px 5px 0 0;
+    text-align: right;
+}
+
+.list_header .close_button{
+    float: right;
+    border: none;
+    background-color: rgba(255, 255, 255, 0);
+    margin: 0px 0px 0 0;
+    text-align: right;
+}
+
+.list_card_detail .close_button{
+    float: right;
+    border: none;
+    background-color: rgba(255, 255, 255, 0);
+    margin: 0px 0px 0 0;
     text-align: right;
 }
 
@@ -736,6 +750,78 @@ html > body #sortable li {
     line-height: 1.2em;
 }
 
+/*.attachment-thumbnail {*/
+/*    border-radius: 3px;*/
+/*    min-height: 80px;*/
+/*    margin: 0 0 8px;*/
+/*    overflow: hidden;*/
+/*    position: relative;*/
+/*}*/
 
+/*.attachment-thumbnail-preview {*/
+/*    background-color: rgba(9,30,66,.04);*/
+/*    background-position: 50%;*/
+/*    background-size: contain;*/
+/*    background-repeat: no-repeat;*/
+/*    border-radius: 3px;*/
+/*    height: 80px;*/
+/*    margin-top: -40px;*/
+/*    position: absolute;*/
+/*    top: 50%;*/
+/*    left: 0;*/
+/*    text-align: center;*/
+/*    text-decoration: none;*/
+/*    z-index: 1;*/
+/*    width: 112px;*/
+/*}*/
+/*.attachment-thumbnail-details {*/
+/*    box-sizing: border-box;*/
+/*    cursor: pointer;*/
+/*    padding: 8px 8px 8px 128px;*/
+/*    min-height: 80px;*/
+/*    margin: 0;*/
+/*    z-index: 0;*/
+/*}*/
+/*.attachment-thumbnail-details .attachment-thumbnail-name {*/
+/*    font-weight: 700;*/
+/*    word-wrap: break-word;*/
+/*}*/
+/*.attachment-thumbnail-details-title-options {*/
+/*    margin-bottom: 8px;*/
+/*}*/
 
+/*.attachment-thumbnail-details-title-options-item {*/
+/*    font-size: 14px;*/
+/*    margin-bottom: 8px;*/
+/*}*/
+p:hover .checklist_del{display:block;}
+p .checklist_del{
+    display:none;
+    padding:3px;
+    line-height:8px;
+    cursor:pointer;
+    position:absolute;
+    right:0px;
+    top:0px;
+}
 
+.list_card_detail:hover span{display: block}
+.list_card_detail span{
+    display:none;
+    padding:3px;
+    line-height:8px;
+    cursor:pointer;
+    position:absolute;
+    right:0px;
+    top:0px;
+}
+.list_header:hover span{display: block}
+.list_header span{
+    display:none;
+    padding:3px;
+    line-height:8px;
+    cursor:pointer;
+    position:absolute;
+    right:0px;
+    top:0px;
+}

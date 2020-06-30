@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html xmlns:th="http://www.thymeleaf.org">
+<html  lang="en" xmlns:th="http://www.thymeleaf.org">
   <head>
     <meta charset="utf-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
@@ -20,7 +20,6 @@
           href="../../static/bootstrap4/assets/fonts/font-awesome.min.css">
     <link rel="stylesheet" th:href="@{/site/css/mysite.css}"  href="../../static/site/css/mysite.css">
 
-
       </head>
   <body>
   <!--//导航栏-->
@@ -34,12 +33,12 @@
           <div class="row">
             <!-- Logo & Information Panel-->
             <div class="col-lg-6">
-              <div class="info d-flex align-items-center">
+              <div class="info d-flex align-items-center" style="opacity:0.8 ;">
                 <div class="content">
                   <div class="logo">
-                    <h1>欢迎登录</h1>
+                    <h1 th:text="#{login.tip}">欢迎登录</h1>
                   </div>
-                  <p>金屹电源远程管理系统</p>
+                  <p th:text="#{login.p}">云笔记plus管理系统</p>
                 </div>
               </div>
             </div>
@@ -47,27 +46,38 @@
             <div class="col-lg-6 bg-white">
               <div class="form d-flex align-items-center">
                 <div class="content">
-                  <form method="post" action="/notebook/login" class="form-validate" id="loginFrom">
+                  <form class="form-validate" id="loginFrom" th:action="@{/login}" method="post" >
+                    <div align="center" th:if="${error != null}">
+                      <p style="font-size: 20; color: #FF1C19;" th:text="${error}"></p>
+                    </div>
+                    <div align="center" th:if="${msg != null}">
+                      <p style="font-size: 20; color: #FF1C19;" th:text="${msg}"></p>
+                    </div>
+                    <input type="hidden"
+                           name="${_csrf.parameterName}"
+                           value="${_csrf.token}"/>
                     <div class="form-group">
-                      <input id="login-username" type="text" th:name="username" required data-msg="请输入用户名" placeholder="用户名" value="admin" class="input-material">
+                      <input id="login-username" type="text" th:name="username" required th:data-msg="#{login.username}" th:placeholder="#{login.username}" class="input-material">
                     </div>
                     <div class="form-group">
-                      <input id="login-password" type="password" th:name="password" required data-msg="请输入密码" placeholder="密码" class="input-material">
+                      <input id="login-password" type="password" th:name="password" required th:data-msg="#{login.password}" th:placeholder="#{login.password}" class="input-material">
                     </div>
-                    <button id="login" type="submit" class="btn btn-primary">登录</button>
+                    <button id="login" type="submit" class="btn btn-primary" th:text="#{login.btn_login}">登录</button>
+                    <button id="register" type="submit" class="btn btn-primary"><a href="/register" style="color: white" th:text="#{login.btn_register}">注册</a></button>
                     <div style="margin-top: -40px;">
                     	<div class="custom-control custom-checkbox " style="float: right;">
-											    <input type="checkbox" class="custom-control-input" id="check2" >
-											    <label class="custom-control-label" for="check2">自动登录</label>
+											    <input type="checkbox" class="custom-control-input" id="rememberMme" name="remember-me" >
+											    <label class="custom-control-label" for="rememberMme">[[#{login.rememberme}]]</label>
 											</div>
-											<div class="custom-control custom-checkbox " style="float: right;">
-											    <input type="checkbox" class="custom-control-input" id="check1" >
-											    <label class="custom-control-label" for="check1">记住密码&nbsp;&nbsp;</label>
-											</div> 
+
                     </div>
                   </form>
-                  <br />
-                  <small>没有账号?</small><a href="/notebook/register"  class="signup">&nbsp;注册</a>
+                  <br>
+                      <small><a th:href="@{/user/forgetPwd}"  class="signup" style="margin-top: 10px">&nbsp;[[#{login.forgetPwd}]]</a></small>
+                  <br>
+                <p class="mt-5 mb-3 text-muted" style="margin-left: 120px;">&copy;<span>2019</span>-<span>2020</span></p>
+                <a class="btn btn-sm" style="margin-left: 110px;color: #00b0ff;font-family: 宋体;" th:href="@{/login(lang='zh_CN')}">中文</a>
+                <a class="btn btn-sm" style="color: #00b0ff" th:href="@{/login(lang='en_US')}">English</a>
                 </div>
               </div>
             </div>
@@ -76,10 +86,50 @@
       </div>
     </div>
 
-  <!--底部-->
-  <footer th:replace="fragments/layout2::footer">
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+  <!-- Using the jquery validate plugin -->
+  <script src="https://cdn.jsdelivr.net/jquery.validation/1.16.0/jquery.validate.min.js"></script>
+  <script type="text/javascript" th:src="@{/layer/layer.js}"></script>
+<script type="text/javascript">
+  $(document).ready(function () {
+      //表单验证
+    $("#loginFrom").validate({
+      rules: {
+        username:{
+          required:true,
+          minlength:6,
+          maxlength:20
+        },
+        password: {
+          required: true,
+          minlength: 6,
+          maxlength: 20
+        },
+      },
 
-  </footer>
+      messages: {
+        username: {
+          required: true,
+          minlength: "用户名长度至少6位",
+          maxlength: "用户名长度至多20位"
+        },
+        password: {
+          required: "required",
+          maxlength: "密码长度至多20位",
+          minlength: "密码长度至少6位"
+        }
+      },
 
+      wrapper: 'span',
+      errorPlacement: function (error, element) {
+        error.css({'padding-left': '10px', 'margin-right': '20px', 'padding-bottom': '2px'});
+        error.addClass("arrow");
+        error.insertAfter(element);
+      },
+
+    });
+
+  })
+</script>
   </body>
 </html>

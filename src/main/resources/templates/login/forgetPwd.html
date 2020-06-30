@@ -1,0 +1,144 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>忘记密码</title>
+    <link href="//maxcdn.bootstrapcdn.com/bootstrap/3.3.0/css/bootstrap.min.css" rel="stylesheet" id="bootstrap-css">
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.5.0/css/font-awesome.min.css">
+    <script src="//maxcdn.bootstrapcdn.com/bootstrap/3.3.0/js/bootstrap.min.js"></script>
+    <script src="//code.jquery.com/jquery-1.11.1.min.js"></script>
+    <style type="text/css">
+        .form-gap {
+            padding-top: 70px;
+        }
+    </style>
+</head>
+<body>
+<!--//导航栏-->
+<div th:insert="fragments/layout2::header2">
+
+</div>
+
+<div class="form-gap"></div>
+<div class="container">
+    <div class="row">
+        <div class="col-md-4 col-md-offset-4">
+            <div class="panel panel-default">
+                <div class="panel-body">
+                    <div class="text-center">
+                        <h3><i class="fa fa-lock fa-4x"></i></h3>
+                        <h2 class="text-center">Forgot Password?</h2>
+                        <p>You can reset your password here.</p>
+                        <div class="panel-body">
+
+                            <form id="forget-email-form" role="form" autocomplete="off" class="form" method="post" th:action="@{/user/forgetPwd}">
+
+                                <div class="form-group">
+                                    <div class="input-group">
+                                        <span class="input-group-addon"><i class="glyphicon glyphicon-envelope color-blue"></i></span>
+                                        <input id="email" name="email" placeholder="email address" class="form-control"  type="email">
+                                    </div>
+                                </div>
+                                <div class="form-group">
+                                    <input name="recover-submit" class="btn btn-lg btn-primary btn-block" value="Reset Password" type="submit">
+                                </div>
+
+                                <input type="hidden" class="hide" name="token" id="token" value="">
+                            </form>
+                            <br>本系统只支持qq,163,新浪,gmail,hotmail邮箱
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+<!-- Using the jquery validate plugin -->
+<script src="https://cdn.jsdelivr.net/jquery.validation/1.16.0/jquery.validate.min.js"></script>
+<script type="text/javascript" th:src="@{/layer/layer.js}"></script>
+<script type="text/javascript">
+    $(document).ready(function () {
+        //表单验证
+        $("#forget-email-form").validate({
+            rules: {
+                email: {
+                    required: true,
+                    email: true,
+                    regex: /^\b[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,4}\b$/i,
+                    remote: {
+                        //邮箱不存在报错
+                        url: "/user/check/emailIsNotExists",
+                        type: "post",
+                        data: {
+                            email: function () {
+                                return $("#email").val();
+                            }
+                        }
+                    }
+                },
+            },
+
+            messages: {
+                email:{
+                    required: "required",
+                    regex:"邮箱格式错误",
+                    remote:"邮箱不存在"
+                },
+            },
+
+            wrapper: 'span',
+            submitHandler: function(form) {
+                $.ajax({
+                    url: form.action,
+                    type: form.method,
+                    data: $(form).serialize(),
+                    success: function(response) {
+                        if(response == 1){
+                            var services = {
+                                "qq.com": "https://mail.qq.com",
+                                "sina.com": "https://mail.sina.com",
+                                "163.com":"https://email.163.com",
+                                "gmail.com": "https://gmail.com",
+                                "hotmail.com": "https://hotmail.com"
+                            };
+                            var mail = $("#email").val();
+                            var atPos = mail.indexOf("@");
+                            var hoster = mail.substring(atPos + 1);
+                            var frag = "<button type=\"button\" class=\"btn btn-sunny text-uppercase btn-lg\"><a href=\""+services[hoster]+"\" target='_blank'>进入邮箱验证</a></button>";
+                            $("input[type='submit']").replaceWith(frag);
+
+                        }else {
+                            layer.msg("未知错误", {time: 2000, icon: 5, shift: 6}, function () {
+                            })
+                        }
+                    }
+                });
+            }
+        });
+
+        $.validator.addMethod(
+            /* The value you can use inside the email object in the validator. */
+            "regex",
+
+            /* The function that tests a given string against a given regEx. */
+            function(value, element, regexp)  {
+                /* Check if the value is truthy (avoid null.constructor) & if it's not a RegEx. (Edited: regex --> regexp)*/
+
+                if (regexp && regexp.constructor != RegExp) {
+                    /* Create a new regular expression using the regex argument. */
+                    regexp = new RegExp(regexp);
+                }
+
+                /* Check whether the argument is global and, if so set its last index to 0. */
+                else if (regexp.global) regexp.lastIndex = 0;
+
+                /* Return whether the element is optional or the result of the validation. */
+                return this.optional(element) || regexp.test(value);
+            }
+        );
+    })
+</script>
+
+</body>
+</html>

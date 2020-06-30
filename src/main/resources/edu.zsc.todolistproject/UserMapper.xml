@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="edu.zsc.todolistproject.mapper.UserMapper">
+    <resultMap id="userResultMap" type="edu.zsc.todolistproject.domain.User">
+        <id property="id" column="id"/>
+        <result property="username" column="username"/>
+        <result property="password" column="password"/>
+        <result property="introduction" column="introduction"/>
+        <result property="registerDate" column="registerdate"/>
+        <result property="authorities" column="authorities"
+                typeHandler="edu.zsc.todolistproject.auth.StringSplitTypeHandler"/>
+    </resultMap>
+    <select id="getUserByUsername" resultMap="userResultMap">
+        select * from user where username=#{username}
+    </select>
+
+</mapper>

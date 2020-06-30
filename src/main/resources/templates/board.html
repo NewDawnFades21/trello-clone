@@ -3,8 +3,15 @@
 <header th:replace="fragments/layout :: header"></header>
 <body>
 
+<!--//导航栏-->
+<header th:insert="fragments/layout2::header">
+    <link rel="stylesheet" th:href="@{/site/css/mysite.css}"  href="../../static/site/css/mysite.css">
+    <link rel="stylesheet" th:href="@{/bootstrap4/assets/metismenu/metisMenu.min.css}" href="../../static/bootstrap4/assets/metismenu/metisMenu.min.css">
+    <link rel="stylesheet" th:href="@{/bootstrap4/assets/metismenu/mm-vertical.css}" href="../../static/bootstrap4/assets/metismenu/mm-vertical.css">
+</header>
+
 <div id="board_info">
-    <div class="project_name">[[${board.title}]]</div>
+    <div class="project_name"><input type="text" name="title" th:value="${board.title}" th:id="'board'+${board.id}"></div>
 </div>
 
 <div id="board_canvas" class="list_sortable">
@@ -12,17 +19,19 @@
     <div class="list_wrapper" th:each="deck:${board.decks}">
         <div class="list_content z-depth-1">
             <div class="list_header">
+                <span>x</span>
                 <input type="hidden" name="id" th:value="${deck.value.id}">
                 <input type="hidden" name="boardId" th:value="${board.id}">
                 <textarea class="list_header_name" placeholder="Input Deck Name"
-                          th:text="${deck.value.title}"></textarea>
+                          th:text="${deck.value.title}" style="width: 90%"></textarea>
             </div>
 
             <div class="list_cards">
                 <div class='list_card' th:each="cardMap:${deck.value.cards}">
                     <div class='list_card_detail'>
+                        <span>x</span>
                         <a class='list_card_title modal-trigger modalLink' dir='auto'
-                           th:attr="cardId=${cardMap.key},userId=${user.id}" href='#modalLayer'>[[${cardMap.value.title}]]</a>
+                           th:id="'card'+${cardMap.key}" href='#modalLayer'>[[${cardMap.value.title}]]</a>
                     </div>
                 </div>
             </div>
@@ -39,7 +48,6 @@
 
         </div>
     </div>
-
     <div class="add_list not_sortable">
         <a class="btn-floating btn-large waves-effect waves-light red">
             <i class="material-icons">add</i>

@@ -2,6 +2,7 @@ package edu.zsc.todolistproject.controller;
 
 import edu.zsc.todolistproject.domain.Attachment;
 import edu.zsc.todolistproject.mapper.AttachmentMapper;
+import edu.zsc.todolistproject.service.AttachmentService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -15,6 +16,7 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.nio.file.StandardCopyOption;
+import java.util.Date;
 import java.util.Map;
 import java.util.UUID;
 
@@ -23,15 +25,17 @@ public class UploadController {
     private static String UPLOAD_DIR = "C:\\uploads\\";
 
     @Autowired
-    private AttachmentMapper attatchmentMapper;
+    private AttachmentService attachmentService;
 
     @PostMapping("/uploadMultiFiles")
     public ResponseEntity<?> multiUploadFileModel(MultipartFile file, Attachment attachment) {
         try {
-            String uploadFilePath = UPLOAD_DIR + file.getOriginalFilename();
-            attachment.setFilename(file.getOriginalFilename());
+            String filename = file.getOriginalFilename().replaceAll("\\s","");
+            String uploadFilePath = UPLOAD_DIR + filename;
+            attachment.setFilename(filename);
             attachment.setPath(uploadFilePath);
-            attatchmentMapper.addAttachment(attachment);
+            attachment.setCreateTime(new Date());
+            attachmentService.addAttachment(attachment);
             byte[] bytes = file.getBytes();
             Path path = Paths.get(uploadFilePath);
             Files.write(path, bytes);
@@ -39,7 +43,7 @@ public class UploadController {
             e.printStackTrace();
             return new ResponseEntity<>("Error: " + e.getMessage(), HttpStatus.BAD_REQUEST);
         }
-        return new ResponseEntity<String>("/uploads/" + file.getOriginalFilename(), HttpStatus.OK);
+        return new ResponseEntity<Attachment>(attachment, HttpStatus.OK);
     }
 
     @PostMapping("/downloadFile")
@@ -55,7 +59,7 @@ public class UploadController {
             e.printStackTrace();
             return new ResponseEntity<>("Error: " + e.getMessage(), HttpStatus.BAD_REQUEST);
         }
-        return new ResponseEntity<String>("/uploads/" + attach_url, HttpStatus.OK);
+        return new ResponseEntity<String>(attach_url, HttpStatus.OK);
     }
 
 

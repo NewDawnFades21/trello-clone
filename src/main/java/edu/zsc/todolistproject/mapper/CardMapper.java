@@ -17,11 +17,14 @@ public interface CardMapper {
     @Insert("insert into card(title,deck_id) values(#{title},#{deckId})")
     int insertCard(Card card);
 
-    @Update("update card set title=#{title},deck_id=#{deckId} where id=#{id}")
+    @Update("update card set title=#{title},deck_id=#{deckId},description=#{description} where id=#{id}")
     int updateCard(Card card);
 
     @Update("update card set title=#{title} where id=#{id}")
     int updateCardTitle(Long id, String title);
+
+    @Update("update card set description=#{description} where id = #{id}")
+    int updateCardDesc(Long id,String description);
 
     @Select("select * from card")
     List<Card> getCards();
