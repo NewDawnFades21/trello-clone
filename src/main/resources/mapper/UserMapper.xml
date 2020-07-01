@@ -1,0 +1,48 @@
+﻿<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<!-- namespace表示命名空间 -->
+<mapper namespace="edu.zsc.todolistproject.mapper.UserMapper">
+
+    <select id="queryUserAuthoryAll" resultMap="User_Authority">
+        select * from user
+    </select>
+
+    <select id="queryUserAuthorityByUserId" resultMap="User_Authority">
+        select * from user where id=#{userId}
+    </select>
+
+    <select id="queryUserAuthorityByusernameEmailAuthorityDate" parameterType="edu.zsc.todolistproject.vo.requestVo.QueryUser" resultMap="User_Authority">
+     select * from user
+     <where>
+         <if test="username !=null and username !=''">
+         and username like concat('%',#{username},'%')
+         </if>
+         <if test="email !=null and email !=''">
+         and email  like concat('%',#{email},'%')
+         </if>
+         <if test="authorityId !=null and authorityId !=''">
+         and id in ( select user_id from user_authority where  authority_id=#{authorityId})
+         </if>
+         <if test="startDate !=null and startDate !=''">
+             <![CDATA[  and DATE_FORMAT(registerDate, '%Y-%m-%d %T:%i:%s') >= DATE_FORMAT(#{startDate}, '%Y-%m-%d %T:%i:%s')   ]]>
+         </if>
+         <if test="endDate !=null and endDate !=''">
+             <![CDATA[  and DATE_FORMAT(registerDate, '%Y-%m-%d %T:%i:%s') <= DATE_FORMAT(#{endDate}, '%Y-%m-%d %T:%i:%s')   ]]>
+         </if>
+     </where>
+     <![CDATA[
+        group by id
+     ]]>
+</select>
+    <!--    定义一个ResultMap 封装查询结果-->
+    <resultMap id="User_Authority" type="edu.zsc.todolistproject.vo.UserAuthorityDetail">
+        <id property="userId" column="id"/>
+        <collection property="authorityList" column="id"
+                    ofType="Authority"
+                    select="edu.zsc.todolistproject.mapper.UserMapper.queryauthorityByuserId"/>
+    </resultMap>
+
+
+</mapper>

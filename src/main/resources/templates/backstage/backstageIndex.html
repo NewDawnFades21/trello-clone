@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head th:replace="backstage/components/fragment :: backstageHeader"></head>
+<body>
+
+<!--上方导航栏-->
+<nav th:replace="backstage/components/fragment :: backstageTopMenu"></nav>
+
+<!--左菜单+右控件-->
+<nav id="zhuTi">
+<!--    <div class="container-fluid">-->
+<!--        <div class="row">-->
+<!--            <div class="col-md-auto col-sm-auto col-lg-auto" ></div>-->
+<!--            <div class="col-md-11 col-sm-11 col-lg-11">-->
+
+
+                <!--            内栅格header  -->
+                <div class="container-fluid">
+                    <div class="row">
+                        <!--                    左侧新菜单header-->
+                        <div class="col-md-2">
+                            <div th:replace="backstage/components/fragment :: backstageLeftMenu"></div>
+                        </div>
+                        <!--                        右侧各模块控件-->
+                        <div class="col-md-10">
+                            <!--主体内容-->
+                            <main>
+                                <iframe th:src="@{/backstage/components/backstageHome}" frameborder="0" class="backstage-iframe" id="backstage-iframe"></iframe>
+                            </main>
+                        </div>
+
+                    </div>
+                </div>
+
+
+<!--            </div>-->
+<!--            <div class="col-md-auto col-sm-auto col-lg-auto" ></div>-->
+<!--        </div>-->
+<!--    </div>-->
+</nav>
+
+<!--&lt;!&ndash;页面底部&ndash;&gt;-->
+<!--<footer class="footer mt-auto py-3 fixed-bottom">-->
+<!--    <hr>-->
+<!--    <div class="text-center">-->
+<!--        <span class="text-muted">by 同路人</span>-->
+<!--    </div>-->
+<!--</footer>-->
+
+<!--引入js文件-->
+<div  th:replace="backstage/components/fragment :: backstageFooter"></div>
+
+
+<!--    $(".backstage-iframe").attr("src","/backstage/components/"+component);-->
+
+</body>
+</html>

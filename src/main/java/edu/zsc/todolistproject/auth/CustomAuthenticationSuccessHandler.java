@@ -59,7 +59,7 @@ public class CustomAuthenticationSuccessHandler implements AuthenticationSuccess
         Map<String, String> roleTargetUrlMap = new HashMap<>();
         roleTargetUrlMap.put("ROLE_USER", "/notebook/user");
         //管理员这里改一下跳转的url
-        roleTargetUrlMap.put("ROLE_ADMIN", "/notebook/user");
+        roleTargetUrlMap.put("ROLE_ADMIN", "/backstage");
 
         final Collection<? extends GrantedAuthority> authorities = authentication.getAuthorities();
         for (final GrantedAuthority grantedAuthority : authorities) {

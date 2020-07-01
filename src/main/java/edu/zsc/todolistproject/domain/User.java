@@ -15,4 +15,5 @@ public class User implements Serializable {
     private Date registerDate;
     private List<String> authorities;
     private String email;
+    private int status;
 }

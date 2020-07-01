@@ -58,6 +58,11 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
     @Override
     protected void configure(HttpSecurity http) throws Exception {
         http
+                .headers()
+                .frameOptions()
+                .disable()
+
+                .and()
                 .csrf().disable()
                 .authorizeRequests()
                 .antMatchers("/login").permitAll()
@@ -66,6 +71,11 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                 .antMatchers("/user/changPwdByEmail").permitAll()
                 .antMatchers("/user/check/**").permitAll()
                 .antMatchers(resources).permitAll()
+                //后台权限
+                .antMatchers("/").permitAll()
+                .antMatchers("/backstage/**").permitAll()
+                .antMatchers("/backstage/components/**").permitAll()
+               // .antMatchers("/backstage/**").hasRole("管理员")
                 .anyRequest().authenticated()
 
                 .and()

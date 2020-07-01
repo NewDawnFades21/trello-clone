@@ -1,0 +1,43 @@
+﻿<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<!-- namespace表示命名空间 -->
+<mapper namespace="edu.zsc.todolistproject.mapper.TeamMapper">
+
+    <select id="queryTeamDetailByMap" resultMap="Team_User">
+--         select * from team
+        select t.* ,tt.name as typeName from team as t ,team_type as tt  where t.type_id=tt.id and 1=1
+        <if test="username !=null and username !=''">
+        and t.id in (select tm.team_id from team_member as tm ,user as u where u.id=tm.user_id and u.username like concat('%',#{username},'%'))
+        </if>
+
+        <if test="title !=null and title !=''">
+            and t.title like concat('%',#{title},'%')
+        </if>
+
+        <if test="typeId !=null and typeId !=''">
+            and t.type_id=#{typeId}
+        </if>
+
+    group by t.id
+    </select>
+
+    <select id="queryTeamDetailByTeamId" resultMap="Team_User">
+        select t.* ,tt.name as typeName,tt.id as typeId  from team as t ,team_type as tt where t.type_id=tt.id and t.id=#{teamId}
+    </select>
+    <!--    定义一个ResultMap 封装查询结果-->
+    <resultMap id="Team_User" type="edu.zsc.todolistproject.vo.TeamDetail">
+        <id property="id" column="id"/>
+<!--        <result property="type" column="name"/>-->
+        <!--        对象1对1关联-->
+<!--        <association property="type" column="type_id" javaType="TeamType"-->
+<!--                     select="edu.zsc.todolistproject.mapper.TeamMapper.queryTeamTypeById"/>-->
+        <!--        对象1对多关联-->
+        <collection property="userList" column="id"
+                    ofType="User"
+                    select="edu.zsc.todolistproject.mapper.TeamMapper.queryUserByteamId"/>
+    </resultMap>
+
+
+</mapper>
