@@ -1,0 +1,876 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head th:replace="backstage/components/fragment :: componentHeader"></head>
+<body>
+
+<div class="card">
+    <div class="card-header">
+        <!--表单-->
+        <form action="" id="queryForm">
+            <div class="form-row align-items-center">
+                <!--                    用户名-->
+                <div class="col-sm-3 my-1">
+                    <div class="input-group">
+                        <label for="queryuserName" class="my-1">用户名：</label>
+                        <input type="text" class="form-control" id="queryuserName" placeholder="用户名">
+                    </div>
+                </div>
+
+                <!--                    邮箱-->
+                <div class="col-sm-3 my-1">
+                    <div class="input-group">
+                        <label for="queryEmail" class="my-1"> 邮 箱：</label>
+                        <input type="text" class="form-control" id="queryEmail" placeholder="邮箱">
+                    </div>
+                </div>
+
+                <!--                    权限-->
+                <div class="col-sm-3 my-1">
+                    <div class="input-group">
+                        <label for="queryAuthority" class="my-1"> 权 限：</label>
+                        <select class="custom-select" id="queryAuthority">
+                            <option value="" selected>请选择权限</option>
+        <!--                    <option value="1">One</option>-->
+                        </select>
+                    </div>
+                </div>
+
+                <div class="col-sm-auto my-1">
+                    <button type="button" class="btn btn-primary"  onclick="queryUser()">查询</button>
+                    <button type="button" class="btn btn-info"  onclick="reset()">清除</button>
+                </div>
+
+            </div>
+        </form>
+    </div>
+    <div class="card-body">
+        <!--操作按钮-->
+        <div style="padding: 8px;">
+            <button type="button" class="btn btn-info" onclick="Refresh()">刷新</button>
+            <button type="button" class="btn btn-success" onclick="activateUsers()">激活</button>
+            <button type="button" class="btn btn-secondary" onclick="stopUsers()">停用</button>
+            <button type="button" class="btn btn-danger" onclick="deletes()">批量删除</button>
+            <button type="button" class="btn btn-primary" onclick="resetPasswords()">重置密码</button>
+            <button type="button" class="btn btn-warning"  data-toggle="modal" data-target="#addModal">添加用户</button>
+        </div>
+    </div>
+</div>
+
+<!--用户表-->
+<table id="userTable" lay-filter="table"></table>
+
+
+<!--弹窗之 编辑用户信息 -->
+<div class="modal fade" id="editModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title"><img th:src="@{/img/edit.png}" style="width: 45px;height: 45px;">&nbsp;编辑用户信息</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <!--                主体内容-->
+                <form action="" id="editForm" novalidate="novalidate">
+                    <div class="form-row align-items-center">
+                        <input type="hidden" id="editId" value="">
+                        <!--                    用户名-->
+                        <div class="col-sm-12 my-1">
+                            <div class="input-group">
+                                <label for="edituserName" class="my-1">用户名：</label>
+                                <input type="text" class="form-control" id="edituserName" placeholder="用户名" required="required">
+                                <div class="invalid-feedback" style="text-align: center"> 用户名不能为空</div>
+                            </div>
+                        </div>
+<!--                        <div class="col-sm-12 my-1">-->
+<!--                            <div class="input-group">-->
+<!--                                <label for="editPassword" class="my-1"> &nbsp;密 码 ：</label>-->
+                                <input type="hidden" class="form-control" id="editPassword" placeholder="密码" minlength="3" required="required" >
+<!--                                <div class="invalid-feedback" style="text-align: center"> 密码不能少于3个字符</div>-->
+<!--                            </div>-->
+<!--                        </div>-->
+                        <div class="col-sm-12 my-1">
+                            <div class="input-group">
+                                <label for="editEmail" class="my-1"> &nbsp;邮 箱 ：</label>
+                                <input type="email" class="form-control" id="editEmail" placeholder="邮箱" required="required">
+                                <div class="invalid-feedback" style="text-align: center"> 电子邮箱格式不正确</div>
+                            </div>
+                        </div>
+                        <div class="col-sm-12 my-1">
+                            <div class="input-group">
+                                <label for="editIntroduction" class="my-1"> &nbsp;介 绍 ：</label>
+                                <input type="text" class="form-control" id="editIntroduction" placeholder="介绍">
+                            </div>
+                        </div>
+                        <div class="col-sm-12 my-1">
+                            <div class="input-group">
+                                <label class="my-1"> &nbsp;&nbsp;状 态：</label>
+                                <div class="custom-control custom-radio custom-control-inline my-1">
+                                    <input type="radio" id="customRadioInline3" name="editStatus" class="custom-control-input" value="0">
+                                    <label class="custom-control-label" for="customRadioInline3">未激活</label>
+                                </div>
+                                <div class="custom-control custom-radio custom-control-inline my-1">
+                                    <input type="radio" id="customRadioInline4" name="editStatus" class="custom-control-input" value="1">
+                                    <label class="custom-control-label" for="customRadioInline4">激活</label>
+                                </div>
+                            </div>
+                        </div>
+
+                    </div>
+                </form>
+                <!--                //主题内容-->
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-outline-primary" onclick="editSubmit()" id="editSubmit"><img th:src="@{/img/submit.png}" class="icoImg">&nbsp;确定</button>
+                <button type="button" class="btn btn-outline-secondary" data-dismiss="modal"><img th:src="@{/img/cancel.png}" class="icoImg">&nbsp;取消</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!--弹窗之删除用户信息-->
+<div class="modal fade" id="deleteModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="exampleModalCenterTitle">删除确定</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <div style="margin:auto auto;">
+                    <input type="hidden" id="deleteId">
+                    <img th:src="@{/img/tip.png}" style="height: 25px;width: 25px;">
+                    <label>确定要删除吗？</label>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-primary" data-dismiss="modal"id="deleteSubmit" onclick="remove()">确定</button>
+                <button type="button" class="btn btn-secondary" data-dismiss="modal">取消</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!--弹窗之批量删除用户信息-->
+<div class="modal fade" id="deletesModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="exampleModalCenterTitle1">删除确定</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <div style="margin:auto auto;">
+<!--                    <input type="hidden" id="deleteId">-->
+                    <img th:src="@{/img/tip.png}" style="height: 25px;width: 25px;">
+                    <label>确定要删除吗？</label>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-primary" data-dismiss="modal" onclick="deleteByIds()">确定</button>
+                <button type="button" class="btn btn-secondary" data-dismiss="modal">取消</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!--弹窗之 添加用户信息 -->
+<div class="modal fade" id="addModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title"><img th:src="@{/img/authority.png}" style="width: 45px;height: 45px;">&nbsp;添加用户信息</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <!--                主体内容-->
+                <form action="" id="addForm" novalidate="novalidate">
+                    <div class="form-row align-items-center">
+                        <!--                    用户-->
+                        <div class="col-sm-12 my-1">
+                            <div class="input-group ">
+                                <label for="addUsername" class="my-1">用户名：</label>
+                                <input type="text" class="form-control" id="addUsername" placeholder="用户名" required="required">
+                                <div class="invalid-feedback" style="text-align: center;">用户名不能为空~</div>
+                            </div>
+                        </div>
+                        <div class="col-sm-12 my-1">
+                            <div class="input-group">
+                                <label for="addPassword" class="my-1"> &nbsp;&nbsp;密 码：</label>
+                                <input type="text" class="form-control" id="addPassword" placeholder="密码" minlength="3" required="required">
+                                <div class="invalid-feedback" style="text-align: center;">密码不能少于3个字符~</div>
+                            </div>
+                        </div>
+                        <div class="col-sm-12 my-1">
+                            <div class="input-group">
+                                <label for="addEmail" class="my-1"> &nbsp;&nbsp;邮 箱：</label>
+                                <input type="email" class="form-control" id="addEmail" placeholder="邮箱" required="required">
+                                <div class="invalid-feedback" style="text-align: center;">电子邮箱的格式不正确~</div>
+                            </div>
+                        </div>
+                        <div class="col-sm-12 my-1">
+                            <div class="input-group">
+                                <label for="addIntroduction" class="my-1"> &nbsp;&nbsp;介 绍：</label>
+                                <input type="text" class="form-control" id="addIntroduction" placeholder="介绍" >
+                            </div>
+                        </div>
+                        <div class="col-sm-12 my-1">
+                            <div class="input-group">
+                                <label for="addAuthority" class="my-1"> &nbsp;&nbsp;权 限：</label>
+                                <select class="custom-select" id="addAuthority">
+                                    <option value="" selected>请选择权限</option>
+                                    <!--                    <option value="1">One</option>-->
+                                </select>
+                            </div>
+                        </div>
+                        <div class="col-sm-12 my-1">
+                            <div class="input-group">
+                                <label class="my-1"> &nbsp;&nbsp;状 态：</label>
+                                <div class="custom-control custom-radio custom-control-inline my-1">
+                                    <input type="radio" id="customRadioInline1" name="addStatus" class="custom-control-input" checked="checked" value="0">
+                                    <label class="custom-control-label" for="customRadioInline1">不激活</label>
+                                </div>
+                                <div class="custom-control custom-radio custom-control-inline my-1">
+                                    <input type="radio" id="customRadioInline2" name="addStatus" class="custom-control-input" value="1">
+                                    <label class="custom-control-label" for="customRadioInline2">激活</label>
+                                </div>
+                            </div>
+                        </div>
+
+                    </div>
+                </form>
+                <!--                //主题内容-->
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-outline-primary" onclick="addSubmit()"><img th:src="@{/img/submit.png}" class="icoImg">&nbsp;确定</button>
+                <button type="button" class="btn btn-outline-secondary" data-dismiss="modal"><img th:src="@{/img/cancel.png}" class="icoImg">&nbsp;取消</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!--弹窗之 添加用户权限信息 -->
+<div class="modal fade" id="addAuthorityModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title"><img th:src="@{/img/authority.png}" style="width: 45px;height: 45px;">&nbsp;添加用户权限信息</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <!--                主体内容-->
+                <form action="" id="addAuthorityForm" novalidate="novalidate">
+                    <div class="form-row align-items-center">
+                        <!--                    用户-->
+                        <div class="col-sm-12 my-1">
+                            <div class="input-group">
+                                <label for="adduserId" class="my-1"> &nbsp;&nbsp;I D：</label>
+                                <input type="text" class="form-control" id="adduserId" placeholder="Id" disabled="disabled">
+                            </div>
+                        </div>
+                        <div class="col-sm-12 my-1">
+                            <div class="input-group">
+                                <label for="addUserAuthority" class="my-1"> 权限：</label>
+                                <select class="custom-select" id="addUserAuthority">
+                                    <option value="" selected>请选择权限</option>
+                                    <!--                    <option value="1">One</option>-->
+                                </select>
+                            </div>
+                        </div>
+
+                    </div>
+                </form>
+                <!--                //主题内容-->
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-outline-primary" data-dismiss="modal" onclick="addAuthoritySubmit()" id="addAuthoritySubmit"><img th:src="@{/img/submit.png}" class="icoImg">&nbsp;确定</button>
+                <button type="button" class="btn btn-outline-secondary" data-dismiss="modal"><img th:src="@{/img/cancel.png}" class="icoImg">&nbsp;取消</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!--弹窗之 删除用户权限信息 -->
+<div class="modal fade" id="deleteAuthorityModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title"><img th:src="@{/img/delete.png}" style="width: 45px;height: 45px;">&nbsp;删除用户权限信息</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <!--                主体内容-->
+                <form action="" id="deleteAuthorityForm">
+                    <div class="form-row align-items-center">
+                        <!--                    用户-->
+                        <div class="col-sm-12 my-1">
+                            <div class="input-group">
+                                <label for="deleteUserId" class="my-1"> &nbsp;&nbsp;I D：</label>
+                                <input type="text" class="form-control" id="deleteUserId" placeholder="Id" disabled="disabled">
+                            </div>
+                        </div>
+                        <div class="col-sm-12 my-1">
+                            <div class="input-group">
+                                <label for="deleteUserAuthority" class="my-1"> 权限：</label>
+                                <select class="custom-select" id="deleteUserAuthority">
+                                    <option value="" selected>请选择权限</option>
+                                    <!--                    <option value="1">One</option>-->
+                                </select>
+                            </div>
+                        </div>
+
+                    </div>
+                </form>
+                <!--                //主题内容-->
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-outline-primary" data-dismiss="modal" onclick="deleteAuthoritySubmit()" id="addSubmit"><img th:src="@{/img/submit.png}" class="icoImg">&nbsp;确定</button>
+                <button type="button" class="btn btn-outline-secondary" data-dismiss="modal"><img th:src="@{/img/cancel.png}" class="icoImg">&nbsp;取消</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+<!--引入js文件-->
+<footer  th:replace="backstage/components/fragment :: componentFooter"></footer>
+
+<script>
+    window.onload=function () {
+        $.ajax({
+            type:'get',
+            url:'/backstage/authority/authorityAll',
+            contentType:'application/json',
+            processData:false,
+            success:function (res) {
+                console.log(res.data);
+                var authorityList=res.data.list;
+                var queryAuthoeiry=$("#queryAuthority");
+                var addAuthority=$("#addAuthority");
+                $("#queryAuthority option").remove();
+                $("#addAuthority option").remove();
+                queryAuthoeiry.append("<option value=''>请选择权限</option>");
+                addAuthority.append("<option value=''>请选择权限</option>");
+                for(var i in authorityList){
+                    queryAuthoeiry.append("<option value='"+authorityList[i].id+"'>"+
+                        authorityList[i].authority+"</option>");
+                    addAuthority.append("<option value='"+authorityList[i].id+"'>"+
+                        authorityList[i].authority+"</option>");
+                }
+            }
+        });
+    }
+
+    //将返回的json数据调整为表格所需的数据格式, bootstrap table渲染数据格式{total:xx,rows:[]}
+    // res为服务器返回的数据
+    function responseHandler(res) {
+        console.log(res);
+        var datas=[];
+        datas.push({total:res.data.total,rows:res.data.list});
+        return datas[0];
+    }
+
+    //动态生成操作区域的的按钮
+    // row.id为每行数据的主键
+    //操作
+    function opFormatter(value, row, index) {
+        var actions=[];
+        actions.push('<a class="btn btn-primary btn-sm" href="javascript:void(0)" data-toggle="modal" data-target="#editModal" onclick="edit(\''+row.userId+'\')"><i class="fa fa-edit"></i> 编辑</a> ');
+        actions.push('<a class="btn btn-danger btn-sm" href="javascript:void(0)" data-toggle="modal" data-target="#deleteModal"  onclick="deleteId(\''+row.userId+'\')"><i class="fa fa-remove"></i> 删除</a> ');
+        actions.push('<a class="btn btn-success btn-sm" href="javascript:void(0)" data-toggle="modal" data-target="#addAuthorityModal"  onclick="addAuthority(\''+row.userId+'\')"><i class="fa fa-adn"></i> 添加权限</a> ');
+        actions.push('<a class="btn btn-warning btn-sm" href="javascript:void(0)" data-toggle="modal" data-target="#deleteAuthorityModal"  onclick="deleteAuthority(\''+row.userId+'\')"><i class="fa fa-remove"></i> 删除权限</a> ');
+        return actions.join('');
+    }
+
+    //定义表格列与json数据字段的对应关系
+    var columns = [
+        {
+            checkbox:true
+        }, {
+            title:"序号",
+            formatter:function (value,row,index) {
+                return index+1;
+            }
+        }, {
+            field:"username",
+            title:"用户名",
+            sortables:true
+        }, {
+            field:"password",
+            title:"密码",
+            sortables:true,
+            formatter: function (value, row, index) { //格式化输出
+                return (row.password).substring(0,8)+"...";
+             }
+        }, {
+            field:"email",
+            title:"邮箱",
+            sortables:true
+        }, {
+            field:"introduction",
+            title:"介绍",
+            sortables:true
+        }, {
+            field:"registerdate",
+            title:"创建时间",
+            sortables:true
+        }, {
+            field:"authorityList",
+            title:"权限",
+            sortables:true,
+            formatter: function (value, row, index) { //格式化输出
+                var html="";
+                for(var i=0;i<row.authorityList.length;i++){
+                    html+="<button class='btn-info'disabled='disabled'style='padding: 1px; margin-right: 2px;margin-top:1px;border:none;'> "+row.authorityList[i].authority+" </button>";
+                }
+                return html;
+            }
+        }, {
+            field:"status",
+            title:"状态",
+            sortables:true,
+            formatter: function (value, row, index) { //格式化输出
+                if(row.status==1){
+                    return"<button class='btn-success'disabled='disabled'style='padding:3px; border:none;'>已激活</button>";
+                }else{
+                    return"<button class='btn-secondary'disabled='disabled'style='padding:3px; border:none;'>未激活</button>";
+                }
+            }
+        }, {
+            title:"操作",
+            align:"center",
+            formatter:opFormatter
+        }
+    ];
+
+    //和后台交互的查询参数对象
+    function queryParams(params) {
+        var params = {
+            pageSize: params.limit,                         //页面大小
+            pageNum: (params.offset / params.limit) + 1,   //页码
+            orderColumn: params.sort,        //排序列名
+            sortOrder: params.order,    //排序命令（desc，asc）
+            username:$("#queryuserName").val(),
+            email:$("#queryEmail").val(),
+            authorityId:$("#queryAuthority option:selected").val()
+        };
+        params['keyword'] = "test";  // 传入查询分页中的关键词或者查询对象
+        console.log(params);
+        return params;
+    }
+
+    //获取table对象
+    var table = $('#userTable');
+    function onloadTable(){
+        var prefix = "";
+        //定义表格的相关属性
+        var options = {
+            //  locale: $('#locale').val(),
+            height: 500,    //表格高度
+            pagination: true,  // 启动分页
+            sortable: true,   //启动排序
+            pageList: "[5,10, 20, 50, All]",  //每页显示的数量
+            pageSize: 10,    //默认每页的记录数
+            striped: true,   //间隔显示颜色
+            url: prefix+"/backstage/user/queryUserByMap",
+            responseHandler: responseHandler,  //处理服务器返回的数据格式
+            sidePagination: 'server',  //服务器分页则修改为server
+            clickToSelect: true,     //单击行进行选择
+           // multipleSelectRow: true,   //允许多选
+            pageNumber: 1,            //默认页面为第一页
+            queryParams: queryParams,  //与服务器交互的查询参数
+            theadClasses: 'thead-light', //设置表头样式，thead-light,thead-dark,''
+            columns: columns           //设置每列的字段内容
+        }
+        table.bootstrapTable('destroy').bootstrapTable(options);
+        //$('#table').init(options);//初始化表格
+    }
+
+    $(function () {
+        onloadTable();
+    });
+
+    //刷新
+    function Refresh(){
+        onloadTable();
+    }
+
+    //编辑按钮
+    function edit(id) {
+        $.ajax({
+            type:'get',
+            url:'/backstage/user/viewUserById/'+id,
+            contentType:'application/json',
+            processData:false,
+            success:function (res) {
+                console.log(res.data);
+                var user=res.data;
+                $("#editId").val(user.userId);
+                $("#edituserName").val(user.username);
+                $("#editPassword").val(user.password);
+                $("#editEmail").val(user.email);
+                $("#editIntroduction").val(user.introduction);
+                if(user.status==1){
+                    $("input[value='1']").attr('checked','true');
+                }else{
+                    $("input[value='0']").attr('checked','true');
+                }
+            }
+        });
+    }
+
+    //提交编辑用户
+    function editSubmit() {
+        var username=$("#edituserName").val();
+        if($("#editForm")[0].checkValidity()===false){
+            $("#editForm").addClass("was-validated");
+        }else{
+            $("#editModal").modal("hide");
+            var userData={
+                id:$("#editId").val().toString(),
+                username:$("#edituserName").val(),
+                password:$("#editPassword").val(),
+                introduction:$("#editIntroduction").val(),
+                email:$("#editEmail").val(),
+                status:$("input[name='editStatus']:checked").val()
+            }
+            console.log($("#editId").val()+$("#edituserName").val()+"编辑信息："+userData);
+            $.ajax({
+                type:'post',
+                url:'/backstage/user/editUserById',
+                contentType:'application/json',
+                data:JSON.stringify(userData),
+                processData:false,
+                success:function (res) {
+                    var editCount=res.data;
+                    console.log("编辑是否成功："+res.data);
+                    if(editCount>0){
+                        toastr.success("修改成功");
+                        onloadTable();
+                    }else{
+                        toastr.warning("修改失败");
+                    }
+                }
+            });
+        }
+    }
+
+    //删除用户
+    function deleteId(id) {
+        $("#deleteId").val(id);
+    }
+    function remove() {
+        var id=$("#deleteId").val();
+        $.ajax({
+            type:'get',
+            url:'/backstage/user/deleteUserById/'+id,
+            contentType:'application/json',
+            processData:false,
+            success:function (res) {
+                var deleteCount=res.data;
+                console.log("删除条数："+deleteCount);
+                if(deleteCount>0){
+                    toastr.success("删除成功");
+                    onloadTable();
+                }else {
+                    toastr.warning("删除失败");
+                }
+            }
+        });
+    }
+
+    //查询用户
+    function queryUser() {
+        onloadTable();
+    }
+
+    //清除
+    function reset() {
+        $("#queryuserName").val("");
+        $("#queryEmail").val("");
+        $("#queryAuthority").val("");
+    }
+
+    //添加用户
+    function addSubmit() {
+        if($("#addForm")[0].checkValidity()===false){
+            $("#addForm").addClass("was-validated");
+        }else{
+            $("#addModal").modal('hide');
+            addData={
+                username:$("#addUsername").val(),
+                password:$("#addPassword").val(),
+                email:$("#addEmail").val(),
+                introduction:$("#addIntroduction").val(),
+                status:$("input[name='addStatus']:checked").val(),
+                authorityId:$("#addAuthority option:selected").val()
+            }
+            console.log(addData+"添加用户数据"+$("#addUsername").val()+","+$("#addAuthority option:selected").val());
+            $.ajax({
+                type:'post',
+                url:'/backstage/user/addUser',
+                contentType:'application/json',
+                data:JSON.stringify(addData),
+                processData:false,
+                success:function (res) {
+                    var editCount=res.data;
+                    console.log("添加是否成功："+res.data);
+                    if(editCount>0){
+                        toastr.success("添加成功");
+                        onloadTable();
+                    }else{
+                        toastr.warning("添加失败");
+                    }
+                }
+            });
+        }
+    }
+
+    //添加权限按钮
+    function addAuthority(id) {
+        $("#adduserId").val(id);
+        $.ajax({
+            type:'get',
+            url:'/backstage/user/viewAuthorityExcludeUserByuserId/'+id,
+            contentType:'application/json',
+            processData:false,
+            success:function (res) {
+                console.log(res.data);
+                var authorityList=res.data;
+                var addUserAuthoeiry=$("#addUserAuthority");
+                $("#addUserAuthority option").remove();
+                addUserAuthoeiry.append("<option value=''>请选择权限</option>");
+                for(var i in authorityList){
+                    addUserAuthoeiry.append("<option value='"+authorityList[i].id+"'>"+
+                        authorityList[i].authority+"</option>");
+                }
+            }
+        });
+    }
+
+    //提交添加的权限
+    function addAuthoritySubmit() {
+        var authorityId=$("#addUserAuthority option:selected").val()
+        var userAuthorityData={
+            userId:$("#adduserId").val(),
+            authorityId:authorityId
+        }
+        console.log(userAuthorityData+","+$("#adduserId").val()+","+authorityId+"用户权限id");
+
+        if(authorityId==null||authorityId==""){
+            toastr.warning("未选中任何权限","添加失败")
+        }else{
+            $.ajax({
+                type:'post',
+                url:'/backstage/user/addUserAuthority',
+                contentType:'application/json',
+                data:JSON.stringify(userAuthorityData),
+                processData:false,
+                success:function (res) {
+                    var editCount=res.data;
+                    console.log("添加是否成功："+res.data);
+                    if(editCount>0){
+                        toastr.success("添加成功");
+                        onloadTable();
+                    }else{
+                        toastr.warning("添加失败");
+                    }
+                }
+            });
+        }
+    }
+
+    //删除权限按钮
+    function deleteAuthority(id) {
+        $("#deleteUserId").val(id);
+        $.ajax({
+            type:'get',
+            url:'/backstage/user/viewAuthorityContainUserByuserId/'+id,
+            contentType:'application/json',
+            processData:false,
+            success:function (res) {
+                console.log(res.data);
+                var authorityList=res.data;
+               // if(authorityList.size()==0||authorityList==null||authorityList==""){
+                //     toastr.warning("该用户未有任何权限");
+                //}else{
+                    var deleteUserAuthoeiry=$("#deleteUserAuthority");
+                    $("#deleteUserAuthority option").remove();
+                    deleteUserAuthoeiry.append("<option value=''>请选择权限</option>");
+                    for(var i in authorityList){
+                        deleteUserAuthoeiry.append("<option value='"+authorityList[i].id+"'>"+
+                            authorityList[i].authority+"</option>");
+                    }
+                }
+
+           // }
+        });
+    }
+
+    //提交删除权限按钮
+    function deleteAuthoritySubmit() {
+        var authorityId=$("#deleteUserAuthority option:selected").val();
+        var userAuthorityData={
+            userId:$("#deleteUserId").val(),
+            authorityId:authorityId
+        }
+        console.log(userAuthorityData+","+$("#deleteUserId").val()+","+authorityId+"用户权限id");
+        if(authorityId==null||authorityId==""){
+            toastr.warning("未选中任何权限","删除失败")
+        }else{
+            $.ajax({
+                type:'post',
+                url:'/backstage/user/deleteUserAuthority',
+                contentType:'application/json',
+                data:JSON.stringify(userAuthorityData),
+                processData:false,
+                success:function (res) {
+                    var deleteCount=res.data;
+                    console.log("添加是否成功："+res.data);
+                    if(deleteCount>0){
+                        toastr.success("删除成功");
+                        onloadTable();
+                    }else{
+                        toastr.warning("删除失败");
+                    }
+                }
+            });
+        }
+
+    }
+
+    //获取多选记录的id
+    function getSelectionIds() {
+        var ids=[];
+        for(let r of table.bootstrapTable('getSelections')){
+            ids.push(r.userId);
+        }
+        return ids;
+    }
+
+    //激活
+    function activateUsers() {
+        ids=getSelectionIds();
+        console.log(ids+"选中的id");
+        if(ids.length==0){
+            toastr.warning("请选择要激活的项");
+        }else{
+            $.ajax({
+                type:'post',
+                url:'/backstage/user/activateUsers',
+                contentType:'application/json',
+                data:JSON.stringify(ids),
+                processData:false,
+                success:function (res) {
+                    var addCount=res.data;
+                    console.log("添加是否成功："+res.data);
+                    if(addCount>0){
+                        toastr.success("激活了"+ids.length+"位","激活成功");
+                        onloadTable();
+                    }else{
+                        toastr.warning("激活失败");
+                    }
+                }
+            });
+
+        }
+    }
+    
+    //停用
+    function stopUsers() {
+        ids=getSelectionIds();
+        if(ids.length==0){
+            toastr.warning("请选择要停用的项");
+        }else{
+            $.ajax({
+                type:'post',
+                url:'/backstage/user/stopUsers',
+                contentType:'application/json',
+                data:JSON.stringify(ids),
+                processData:false,
+                success:function (res) {
+                    var addCount=res.data;
+                    console.log("添加是否成功："+res.data);
+                    if(addCount>0){
+                        toastr.success("停用了"+ids.length+"位","停用成功");
+                        onloadTable();
+                    }else{
+                        toastr.warning("停用失败");
+                    }
+                }
+            });
+
+        }
+    }
+    
+    //批量删除
+    function deletes() {
+        ids=getSelectionIds();
+        if(ids.length==0){
+            toastr.warning("请选择要删除的项");
+        }else {
+            $("#deletesModal").modal('show');
+        }
+    }
+    function deleteByIds() {
+        ids=getSelectionIds();
+        $.ajax({
+            type:'post',
+            url:'/backstage/user/deleteByIds',
+            contentType:'application/json',
+            data:JSON.stringify(ids),
+            processData:false,
+            success:function (res) {
+                var addCount=res.data;
+                console.log("添加是否成功："+res.data);
+                if(addCount>0){
+                    toastr.success("删除了"+ids.length+"位","删除成功");
+                    onloadTable();
+                }else{
+                    toastr.warning("删除失败");
+                }
+            }
+        });
+    }
+    
+    //重置密码
+    function resetPasswords() {
+        ids=getSelectionIds();
+        if(ids.length==0){
+            toastr.warning("请选择要重置密码的项");
+        }else{
+            $.ajax({
+                type:'post',
+                url:'/backstage/user/resetPasswords',
+                contentType:'application/json',
+                data:JSON.stringify(ids),
+                processData:false,
+                success:function (res) {
+                    var addCount=res.data;
+                    console.log("添加是否成功："+res.data);
+                    if(addCount>0){
+                        toastr.success("重置了"+ids.length+"位","重置成功");
+                        onloadTable();
+                    }else{
+                        toastr.warning("重置失败");
+                    }
+                }
+            });
+        }
+    }
+
+
+</script>
+</body>
+</html>

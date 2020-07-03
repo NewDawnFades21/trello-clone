@@ -23,4 +23,7 @@ public interface ToDoMapper {
 
     @Select("select * from todoitem where checklist_id = #{checklistId}")
     List<ToDoItem> getToDoItemsByChecklistId(Long checklistId);
+
+    @Delete("delete from todoitem where checklist_id = #{id}")
+    int deleteToDoItemByChecklistId(Long id);
 }

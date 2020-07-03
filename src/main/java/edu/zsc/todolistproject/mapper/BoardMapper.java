@@ -20,6 +20,4 @@ public interface BoardMapper {
     @Update("update board set title=#{title},visibility=#{visibility} where id=#{id}")
     int updateBoard(Board board);
 
-    @Select("select * from board")
-    List<Board> getBoards();
 }

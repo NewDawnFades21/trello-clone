@@ -2,6 +2,7 @@ package edu.zsc.todolistproject.controller;
 
 import edu.zsc.todolistproject.domain.Attachment;
 import edu.zsc.todolistproject.mapper.AttachmentMapper;
+import edu.zsc.todolistproject.service.AttachmentService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -16,11 +17,11 @@ import java.io.IOException;
 public class AttachmentController {
     private static String UPLOAD_DIR = "C:\\uploads\\";
     @Autowired
-    private AttachmentMapper attachmentMapper;
+    private AttachmentService attachmentService;
 
     @DeleteMapping("/delete/{id}")
     public ResponseEntity<?> deleteAttachment(@PathVariable("id") Long id){
-        int result = attachmentMapper.deleteById(id);
+        int result = attachmentService.deleteById(id);
         if (result == 1){
             return new ResponseEntity<>("删除附件成功", HttpStatus.OK);
         }else {
@@ -30,7 +31,7 @@ public class AttachmentController {
 
     @PutMapping("/update/{id}/{filename}")
     public ResponseEntity<?> updateAttachment(@PathVariable("id") Long id,@PathVariable("filename") String filename) throws IOException {
-        Attachment attachment = attachmentMapper.getAttachmentsById(id);
+        Attachment attachment = attachmentService.getAttachmentsById(id);
 //        update local file's filename
         // File (or directory) with old name
         File file = new File(attachment.getPath());
@@ -50,7 +51,7 @@ public class AttachmentController {
         }
         attachment.setFilename(filename);
         attachment.setPath(UPLOAD_DIR+filename);
-        int res = attachmentMapper.updateAttachment(attachment);
+        int res = attachmentService.updateAttachment(attachment);
         if (res == 1)
             return new ResponseEntity<Attachment>(attachment,HttpStatus.OK);
         else

@@ -5,6 +5,7 @@ var TODO = (function (window) {
     var list_html = "<div class='list_wrapper'>" +
         "<div class='list_content z-depth-1'>" +
         "<div class='list_header'>" +
+        "<span>x</span>" +
         "<textarea class='list_header_name'>{{input-value}}</textarea>" +
         "</div>" +
         "<div class='list_cards'></div>" +
@@ -23,27 +24,28 @@ var TODO = (function (window) {
 
     var card_html = "<div class='list_card'>" +
         "<div class='list_card_detail'>" +
-        "<a class='list_card_title modal-trigger modalLink' dir='auto' href='#modalLayer' id='{{card_id}}' >{{value}}</a>" +
+        "<span>x</span>" +
+        "<a class='list_card_title modal-trigger modalLink' dir='auto' href='#modalLayer' id='card{{card_id}}' >{{value}}</a>" +
         "</div>" +
         "</div>";
 
     var card_template = Handlebars.compile(card_html);
 
-    var checklist_html = "<hr>" +
-        "<p>{{title}}</p>" +
+    var checklist_html = "<div class='checklistDiv'><hr>" +
+        "<p style='position:relative'>{{title}}<span class='checklist_del' id='checklist{{id}}'>x</span></p>" +
         "<div class='tableDiv' id='tablediv{{id}}'></div>" +
         "<form class='toDoCreateForm'>" +
         "<input type='hidden' name='checklistId' value='{{id}}'>" +
         "<input type='hidden' name='cardId' value='{{cardId}}'>" +
         "<input class='add_item'>" +
         "<div class='invalid-feedback'></div>" +
-        "</form>";
+        "</form></div>";
 
     var checklist_template = Handlebars.compile(checklist_html);
 
     var attachment_html =
         "<div class='attachment-thumbnail' id='attachment{{id}}'>" +
-        "<a class='attachment-thumbnail-preview js-open-viewer attachment-thumbnail-preview-is-cover' href='/uploads/{{filename}}' target='_blank' title='{{filename}}' style='background-image: url(/uploads/{{filename}})'></a>"+
+        "<a class='attachment-thumbnail-preview js-open-viewer attachment-thumbnail-preview-is-cover' href='/uploads/{{filename}}' target='_blank' title='{{filename}}' style='background-image: url(/uploads/{{filename}})'></a>" +
         "<p class='attachment-thumbnail-details js-open-viewer'>" +
         "<span class='attachment-thumbnail-name'>{{filename}}</span>" +
         "<span class='attachment-thumbnail-details-title-options' style='display: block;'>" +
@@ -68,13 +70,15 @@ var TODO = (function (window) {
         "</span>" +
         "</span>" +
         "</p>"
-        "</div>";
+    "</div>";
     var comment_html = "<div class='comment' id='comment{{id}}'>" +
-        "<div class='commenter'>{{userId}}</div>" +
-        "<div class='comment_contents z-depth-1'>{{content}}</div>" +
+        "<div class='commenter'>{{user.username}}</div>" +
+        "<div class='comment_contents z-depth-1'>{{{link content}}}</div>" +
+        "<div class='comment_send comment_edit_btn' style='display: none'>Update</div>" +
         "<div class='comment_date'> {{formatTime createTime 'YYYY-MM-DD hh:mm:ss'}} </div>" +
         "<div class='comment_reply'> <a class='comment_edit'>edit</a></div>" +
         "<div class='comment_reply'> <a class='comment_delete'>delete</a></div>" +
+        "<div class='comment_reply'> <a class='comment_huifu'>reply</a></div>" +
         "</div>";
 
     var comment_template = Handlebars.compile(comment_html);
@@ -82,20 +86,46 @@ var TODO = (function (window) {
     var attachment_tamplate = Handlebars.compile(attachment_html);
 
     function init() {
-        $("#board_canvas").on("click", ".modalLink", show_modal);
+        $(document).on("click", ".modalLink", show_modal);
         $(".btn-floating").on("click", create_list);
         $(".save").on("click", add_list);
         $("#board_canvas").on("click", ".add_card", add_card);
         $("#board_canvas").on("click", ".card_save", card_save);
         $("#board_canvas").on("click", ".card_cancel", card_cancel);
         $("#sortable").disableSelection();
+        $(document).on("change",".project_name input",update_board_title);
         $(".add_list a.cancel").on("click", cancel);
         $(".add_list").removeClass("ui-sortable-handle");
 
+        $(document).on("click",".list_card_detail span",delete_card);
 
         $(".list_header_name").on("change", change_deck_title);
+        $(document).on("click",".list_header span",delete_deck);
         $(".attach_from_computer").on("click", file_upload);
         $(".comment_send").on("click", add_comment);
+        $(document).on("click", ".comment_edit_btn", function (e) {
+            var id = $(e.target).closest(".comment").attr("id").slice(7)
+            var content = $(e.target).closest(".comment").find(".comment_contents").val();
+            $.ajax({
+                "type": "PUT",
+                "url": "/comment/edit",
+                "contentType": "application/json;charset=utf-8",
+                "data": JSON.stringify({
+                    "id": id,
+                    "content": content
+                }),
+                "success": function (res) {
+
+                    $(e.target).closest(".comment").find(".comment_contents").replaceWith("<div class='comment_contents z-depth-1'>" + res.content + "</div>");
+                    $(e.target).closest(".comment").find(".comment_edit_btn").attr("style", "display:none");
+
+                },
+                "error": function (xhr, status, error) {
+                    layer.msg(xhr.responseText, {time: 3000, icon: 5, shift: 6}, function () {
+                    });
+                }
+            })
+        })
 
         $("#sortable").sortable({
             placeholder: "ui-state-highlight",
@@ -125,6 +155,71 @@ var TODO = (function (window) {
         $(".shadow_body").fadeOut("slow");
     }
 
+    function update_board_title(e) {
+        var title = $(e.target).val()
+        var id = $(e.target).attr("id").slice("5")
+        // alert(title)
+        $.ajax({
+            url: "/board",
+            type: "PUT",
+            data: {
+                "id": id,
+                "title": title,
+            },
+            "success": function (res) {
+                layer.msg(res, {time: 3000, icon: 1, shift: 6}, function () {
+                });
+            },
+            "error": function (xhr, status, error) {
+                layer.msg(xhr.responseText, {time: 3000, icon: 5, shift: 6}, function () {
+                });
+            }
+        })
+    }
+    function delete_deck(e) {
+        var id = $(e.target).closest(".list_header").find("input[name='id']").val();
+        layer.confirm("确认删除该列表？",  {icon: 3, title:'删除列表'}, function(cindex){
+            layer.close(cindex);
+            $.ajax({
+                "type":"DELETE",
+                "url":"/deck/delete/"+id,
+                "contentType": "application/json;charset=utf-8",
+                "success": function (res) {
+                    layer.msg(res, {time: 3000, icon: 1, shift: 6}, function () {
+                        $(e.target).closest(".list_wrapper").remove();
+                    });
+                },
+                "error": function (xhr, status, error) {
+                    layer.msg(xhr.responseText, {time: 3000, icon: 5, shift: 6}, function () {
+                    });
+                }
+            })
+        }, function(cindex){
+            layer.close(cindex);
+        });
+    }
+    function delete_card(e) {
+        var id = $(e.target).closest(".list_card_detail").find(".list_card_title").attr("cardid");
+        layer.confirm("确认删除该卡片？",  {icon: 3, title:'删除卡片'}, function(cindex){
+            layer.close(cindex);
+            $.ajax({
+                "type":"DELETE",
+                "url":"/card/delete/"+id,
+                "contentType": "application/json;charset=utf-8",
+                "success": function (res) {
+                    layer.msg(res, {time: 3000, icon: 1, shift: 6}, function () {
+                        $(e.target).closest(".list_card").remove();
+                    });
+                },
+                "error": function (xhr, status, error) {
+                    layer.msg(xhr.responseText, {time: 3000, icon: 5, shift: 6}, function () {
+                    });
+                }
+            })
+        }, function(cindex){
+            layer.close(cindex);
+        });
+    }
     function setting_attachment() {
 
         if ($(".modal_for_attachment").hasClass("clicked")) {
@@ -188,19 +283,17 @@ var TODO = (function (window) {
     }
 
     function add_comment(e) {
-        var user_id = $(".comment_frame").find("input[name='userId']").val()
         var card_id = $(".card_title_in_modal").find("input[name='id']").val();
-        var content = $("#comment_content").val()
+        var content = $("#main_comment").val()
         $.ajax({
             url: "/comment/add",
             type: "POST",
             data: {
-                "userId": user_id,
                 "cardId": card_id,
                 "content": content
             },
             success: function (res) {
-                console.log("comment:"+res)
+                console.log("comment:" + res)
                 $(comment_template(res)).appendTo(".comments")
                 $("#main_comment").val("")
             },
@@ -218,15 +311,37 @@ var TODO = (function (window) {
 
     }
 
+    function edit_comment() {
+        var id = $(e.target).closest(".comment").attr("id").slice(7)
+        var content = $(e.target).closest(".comment").find(".comment_contents").val();
+        $.ajax({
+            "type": "PUT",
+            "url": "/comment/edit",
+            "contentType": "application/json;charset=utf-8",
+            "data": JSON.stringify({
+                "id": id,
+                "content": content
+            }),
+            "success": function (res) {
+                if (res == 1) {
+                    $(e.target).closest(".comment").find(".comment_contents").replaceWith($(comment_template(res)));
+                    $(e.target).closest(".comment").find(".comment_edit_btn").attr("style", "display:none");
+                } else if (res == 0) {
+                    layer.msg("更新失败，未知错误", {time: 1000, icon: 5, shift: 6}, function () {
+
+                    });
+                }
+            }
+        })
+    }
+
     function addCheckList(e) {
-        var user_id = $(".comment_frame").find("input[name='userId']").val()
         var card_id = $(".card_title_in_modal").find("input[name='id']").val();
         var title = $("#checklist").val()
         $.ajax({
             url: "/checklist/add",
             type: "POST",
             data: {
-                "userId": user_id,
                 "cardId": card_id,
                 "title": title
             },
@@ -356,11 +471,8 @@ var TODO = (function (window) {
 
 
     function getCardInfo(e) {
-        $(e.target).attr("visited",true)
-        var cardId = $(e.target).attr("cardId");
-        if (cardId == null) {
-            cardId = $(e.target).attr("id")
-        }
+        // $(e.target).attr("visited", true)
+        var cardId = $(e.target).attr("id").slice(4);
         $.ajax({
             url: "/getCardInfo",
             data: {
@@ -381,7 +493,7 @@ var TODO = (function (window) {
                 $(".comments").html("")
                 $("#checklists").html("")
                 $("#attachments").html("")
-                for (var i = 0; i < res.comments.length; i++){
+                for (var i = 0; i < res.comments.length; i++) {
                     $(comment_template(res.comments[i])).appendTo(".comments")
                 }
                 for (var i = 0; i < res.checklists.length; i++) {
@@ -389,15 +501,19 @@ var TODO = (function (window) {
                     var checklistId = res.checklists[i].id
                     $("#tablediv" + checklistId).load("/todo/buildToDoTable", {checklistId: checklistId})
                 }
-                for (var i = 0; i < res.attachments.length; i++){
+                for (var i = 0; i < res.attachments.length; i++) {
                     $(attachment_tamplate(res.attachments[i])).appendTo("#attachments");
                 }
             },
-            "error":function (res) {
-                layer.alert(res, function(index){
+            error: function (jqXHR, textStatus, errorThrown) {
+                // $("#result").html(jqXHR.responseText);
+                console.log("ERROR : ", jqXHR.responseText);
+                // $("#submitButton").prop("disabled", false);
+                layer.alert(jqXHR.responseText, function (index) {
                     // 回调方法
                     layer.close(index);
                 });
+
             }
 
         })
@@ -435,17 +551,15 @@ var TODO = (function (window) {
 
     function card_save(e) {
 
-        var self = $(this)
-        var deckId = self.parent(".add_card_form").find("input[name='deckId']").val();
+        var self = $(e.target)
+        var deckId = self.closest(".add_card_form").find("input[name='deckId']").val();
         var title = self.parent(".add_card_form").find(".list_card_composer_textarea").val();
-        var userId = $("#userId").val()
         $.ajax({
             url: "/card/add",
             type: "POST",
             data: {
                 "title": title,
                 "deckId": deckId,
-                "userId": userId
             },
             success: function (card) {
                 $(".add_card_form").css('display', 'none');

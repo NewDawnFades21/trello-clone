@@ -1,8 +1,10 @@
+
 <!DOCTYPE html>
-<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<html lang="en" xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="https://www.thymeleaf.org/thymeleaf-extras-springsecurity5">
 <head th:fragment="head">
     <meta charset="UTF-8">
-    <title>看板</title>
+    <title>云笔记Plus</title>
     <link rel="stylesheet" th:href="@{/bootstrap4/css/bootstrap.min.css}"
     href="../../static/bootstrap4/css/bootstrap.min.css">
     <link rel="stylesheet" th:href="@{/bootstrap4/assets/css/toastr.min.css}"
@@ -12,7 +14,6 @@
     <link rel="stylesheet" th:href="@{/site/css/mysite.css}"  href="../../static/site/css/mysite.css">
     <link rel="stylesheet" th:href="@{/bootstrap4/assets/metismenu/metisMenu.min.css}" href="../../static/bootstrap4/assets/metismenu/metisMenu.min.css">
     <link rel="stylesheet" th:href="@{/bootstrap4/assets/metismenu/mm-vertical.css}" href="../../static/bootstrap4/assets/metismenu/mm-vertical.css">
-    <script src="../../static/vue/vue-router.min.js"></script>
 
 
 </head>
@@ -31,7 +32,7 @@
             <path fill-rule="evenodd" d="M3.214 1.072C4.813.752 6.916.71 8.354 2.146A.5.5 0 0 1 8.5 2.5v11a.5.5 0 0 1-.854.354c-.843-.844-2.115-1.059-3.47-.92-1.344.14-2.66.617-3.452 1.013A.5.5 0 0 1 0 13.5v-11a.5.5 0 0 1 .276-.447L.5 2.5l-.224-.447.002-.001.004-.002.013-.006a5.017 5.017 0 0 1 .22-.103 12.958 12.958 0 0 1 2.7-.869zM1 2.82v9.908c.846-.343 1.944-.672 3.074-.788 1.143-.118 2.387-.023 3.426.56V2.718c-1.063-.929-2.631-.956-4.09-.664A11.958 11.958 0 0 0 1 2.82z" clip-rule="evenodd"/>
             <path fill-rule="evenodd" d="M12.786 1.072C11.188.752 9.084.71 7.646 2.146A.5.5 0 0 0 7.5 2.5v11a.5.5 0 0 0 .854.354c.843-.844 2.115-1.059 3.47-.92 1.344.14 2.66.617 3.452 1.013A.5.5 0 0 0 16 13.5v-11a.5.5 0 0 0-.276-.447L15.5 2.5l.224-.447-.002-.001-.004-.002-.013-.006-.047-.023a12.582 12.582 0 0 0-.799-.34 12.96 12.96 0 0 0-2.073-.609z" clip-rule="evenodd"/>
         </svg>
-        Space
+      云笔记Plus
     </a>
     <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
         <span class="navbar-toggler-icon"></span>
@@ -53,6 +54,10 @@
             </li>
         </ul>
         <ul class="nav navbar-nav navbar-right">
+            <!--emmmm這裏有bug-->
+<!--            <div sec:authorize="isAuthenticated()">-->
+<!--                Logged user:<span sec:authentication="name"> The value of the "name" property of the authentication object should appear here.</span></div>-->
+<!--            Roles: <span sec:authentication="principal.authorities">[ROLE_USER, ROLE_ADMIN]</span>-->
             <li class="nav-item dropdown">
                 <a class="nav-link dropdown-toggle active"  href="#" id="navbarDropdownMenuLink" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                     <svg class="bi bi-plus" width="1.5em" height="1.5em" viewBox="0 0 16 16" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
@@ -84,7 +89,8 @@
                             <path fill-rule="evenodd" d="M3 14s-1 0-1-1 1-4 6-4 6 3 6 4-1 1-1 1H3zm5-6a3 3 0 1 0 0-6 3 3 0 0 0 0 6z" clip-rule="evenodd"/>
                         </svg>
                 </a>
-                <div class="dropdown-menu" aria-labelledby="navbarDropdownMenuLink">
+<!--                改过style-->
+                <div class="dropdown-menu" aria-labelledby="navbarDropdownMenuLink" style="margin-left: -90px">
                     <a class="dropdown-item" href="#">
                         <svg class="bi bi-person" width="1em" height="1em" viewBox="0 0 16 16" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
                             <path fill-rule="evenodd" d="M13 14s1 0 1-1-1-4-6-4-6 3-6 4 1 1 1 1h10zm-9.995-.944v-.002.002zM3.022 13h9.956a.274.274 0 0 0 .014-.002l.008-.002c-.001-.246-.154-.986-.832-1.664C11.516 10.68 10.289 10 8 10c-2.29 0-3.516.68-4.168 1.332-.678.678-.83 1.418-.832 1.664a1.05 1.05 0 0 0 .022.004zm9.974.056v-.002.002zM8 7a2 2 0 1 0 0-4 2 2 0 0 0 0 4zm3-2a3 3 0 1 1-6 0 3 3 0 0 1 6 0z" clip-rule="evenodd"/>
@@ -126,8 +132,8 @@
 <!--    </div>-->
 <!--</div>-->
 
-    <!--创建新学科模态框header-->
-    <form method="POST" action="'/notebook/deck?id='+${boardDate.id}">
+    <!--创建Board模态框header-->
+    <form method="POST" th:action="@{/notebook/user/deck}" class="needs-validation" novalidate id="boardForm">
     <div class="modal fade" id="exampleModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
         <div class="modal-dialog" role="document">
             <div class="modal-content">
@@ -139,25 +145,47 @@
                 </div>
                 <div class="modal-body">
                     <form>
-                        <div class="form-group">
-                            <label  class="col-form-label">
+                        <div class="form-group row">
+                            <label for="recipient-name" class="col-form-label col-md-4">看板名</label>
+                            <div class="col-md-7">
+                            <input type="text" class="form-control " id="recipient-name" name="title" required>
+                            <div class="invalid-feedback">看板名不能为空!</div>
+                            </div>
+                        </div>
+                        <div class="form-group row">
+                            <label  class="col-form-label col-md-4">
                                 是否公开
                             </label>
-                            <select class="isCheck selectpicker combobox" data-style="btn-success" name="visibility">
-                                <option value ="1">
-                                    公开
-                                </option>
+                            <div class="col-md-5">
+                            <select class="isCheck selectpicker combobox " data-style="btn-success" name="visibility">
                                 <option value ="0">
-                                    非公开
+                                    仅自己可见
+                                </option>
+                                <option value ="1">
+                                    团队成员可见
                                 </option>
                             </select>
+                            </div>
                         </div>
-                        <div class="form-group">
-                            <label for="recipient-name" class="col-form-label">学科名</label>
-                            <input type="text" class="form-control" id="recipient-name" name="title">
+<!--团队-->
+                        <div class="form-group row">
+                            <label  class="col-form-label col-md-4">
+                                个人还是团队
+                            </label>
+                            <div class="col-md-7">
+                            <select class="isCheck selectpicker combobox" data-style="btn-success" name="teamId">
+                                <option>
+                                    无团队
+                                </option>
+                                <option th:each="teamS:${teamSelects}" th:value ="${teamS.id}" th:text="${teamS.title}" >
+                            </option>
+                            </select>
+                            </div>
                         </div>
+<!--  团队结束                      -->
 
                     </form>
+
                 </div>
                 <div class="modal-footer">
                     <button type="button" class="btn btn-secondary" data-dismiss="modal">取消</button>
@@ -172,6 +200,7 @@
 
     <!--创建团队模态框header-->
     <!-- 创建 -->
+    <form method="POST" th:action="@{/notebook/user/team}" class="needs-validation" novalidate>
     <div class="modal fade" id="exampleModal2" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
         <div class="modal-dialog" role="document">
             <div class="modal-content">
@@ -182,45 +211,38 @@
                     </button>
                 </div>
                 <div class="modal-body">
-                    <form>
-                        <div class="form-group">
-                            <label for="recipient-name3" class="col-form-label">团队名称</label>
-                            <input type="text" class="form-control" id="recipient-name3" name="title2">
+                    <form class="needs-validation"  novalidate id="teamForm">
+                        <div class="form-group row">
+                            <label for="recipient-name3" class=" col-md-3 col-form-label">团队名称</label>
+                            <input type="text" class="col-md-8 form-control" id="recipient-name3" name="title2" required minlength="4">
+                            <div class="invalid-feedback">团队名称不能为空！</div>
                         </div>
-                        <div class="form-group">
-                            <label  class="col-form-label">
+                        <div class="form-group row">
+                            <label  class="col-form-label col-md-3">
                                 团队类型
                             </label>
-                            <select class="selectpicker" data-style="btn-primary" name="type">
-                                <option></option>
-                                <option value="0">基础教育</option>
-                                <option value="1">人文</option>
-                                <option value="2">经管</option>
-                                <option value="3">电子</option>
-                                <option value="5">机电</option>
-                                <option value="6">医学</option>
-                                <option value="7">计算机</option>
-                                <option value="8">教育学</option>
-                                <option value="9">其它</option>
+                            <select class="selectpicker" data-style="btn-primary" name="typeId">
+                                <option th:each="teamTS:${teamTSelects}" th:value ="${teamTS.id}" th:text="${teamTS.name}">
                             </select>
                         </div>
-                        <div class="form-group">
-                            <label for="recipient-name4" class="col-form-label">团队成员</label>
-                            <input type="text" class="form-control" id="recipient-name4" placeholder="请输入好友（们）的帐号并以空格分割。可以稍后再填！"/>
+                        <div class="form-group row">
+                            <label for="recipient-name4" class="col-form-label col-md-3">团队成员</label>
+                            <input name="teamMember" type="text" class="form-control col-md-8" id="recipient-name4" placeholder="请输入好友（们）的帐号并以空格分割。"/>
                         </div>
-                        <div class="form-group">
-                            <label for="recipient-name2" class="col-form-label">团队描述</label>
-                            <textarea class="form-control" rows="3" id="recipient-name2" name="description"></textarea>
+                        <div class="form-group row">
+                            <label for="recipient-name2" class="col-form-label col-md-3">团队描述</label>
+                            <textarea class="form-control col-md-8" id="recipient-name2" name="description"></textarea>
                         </div>
                     </form>
                 </div>
                 <div class="modal-footer">
                     <button type="button" class="btn btn-secondary" data-dismiss="modal">取消</button>
-                    <button type="button" class="btn btn-primary">生成</button>
+                    <button type="submit" class="btn btn-primary">生成</button>
                 </div>
             </div>
         </div>
     </div>
+    </form>
     <!--创建新团队模态框footer-->
 
 </header>
@@ -234,7 +256,7 @@
     <nav class="sidebar-nav">
         <ul id="menu">
             <li class="">
-                <a href="#" aria-expanded="false">
+                <a th:href="@{/notebook/user/home}" aria-expanded="false" class="active" href="/notebook/user/home">
                         <span>
                             <svg class="bi bi-house-door" width="1em" height="1em" viewBox="0 0 16 16" fill="currentColor" xmlns="http://www.w3.org/2000/svg">-->
                                 <path fill-rule="evenodd" d="M7.646 1.146a.5.5 0 0 1 .708 0l6 6a.5.5 0 0 1 .146.354v7a.5.5 0 0 1-.5.5H9.5a.5.5 0 0 1-.5-.5v-4H7v4a.5.5 0 0 1-.5.5H2a.5.5 0 0 1-.5-.5v-7a.5.5 0 0 1 .146-.354l6-6zM2.5 7.707V14H6v-4a.5.5 0 0 1 .5-.5h3a.5.5 0 0 1 .5.5v4h3.5V7.707L8 2.207l-5.5 5.5z" clip-rule="evenodd"/>-->
@@ -247,7 +269,7 @@
             <div th:each="team:${teamList}">
                 <li class="">
 <!--                    th:href="'/notebook/teamBoard?id='+${team.id}"-->
-                    <a aria-expanded="false">
+                    <a aria-expanded="false"  th:href="@{'/notebook/user/teamBoard?teamId='+${team.id}}" >
                                                 <span>
                                                     <svg class="bi bi-people" width="1em" height="1em" viewBox="0 0 16 16" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
                             <path fill-rule="evenodd" d="M15 14s1 0 1-1-1-4-5-4-5 3-5 4 1 1 1 1h8zm-7.995-.944v-.002.002zM7.022 13h7.956a.274.274 0 0 0 .014-.002l.008-.002c-.002-.264-.167-1.03-.76-1.72C13.688 10.629 12.718 10 11 10c-1.717 0-2.687.63-3.24 1.276-.593.69-.759 1.457-.76 1.72a1.05 1.05 0 0 0 .022.004zm7.973.056v-.002.002zM11 7a2 2 0 1 0 0-4 2 2 0 0 0 0 4zm3-2a3 3 0 1 1-6 0 3 3 0 0 1 6 0zM6.936 9.28a5.88 5.88 0 0 0-1.23-.247A7.35 7.35 0 0 0 5 9c-4 0-5 3-5 4 0 .667.333 1 1 1h4.216A2.238 2.238 0 0 1 5 13c0-1.01.377-2.042 1.09-2.904.243-.294.526-.569.846-.816zM4.92 10c-1.668.02-2.615.64-3.16 1.276C1.163 11.97 1 12.739 1 13h3c0-1.045.323-2.086.92-3zM1.5 5.5a3 3 0 1 1 6 0 3 3 0 0 1-6 0zm3-2a2 2 0 1 0 0 4 2 2 0 0 0 0-4z" clip-rule="evenodd"/>
@@ -292,7 +314,7 @@
 <footer class="footer mt-auto py-3" th:fragment="footer">
     <hr>
     <div class="text-center">
-        <span class="text-muted">by 同路人</span>
+        <span class="text-muted" style="font-family: 宋体;">Copyright&copy;版权归云词云plus所有</span>
     </div>
 
     <script th:src="@{/bootstrap4/js/jquery.min.js}" src="../../static/bootstrap4/js/jquery.min.js"></script>
@@ -302,11 +324,26 @@
     <script th:src="@{/site/js/utils.js}"></script>
     <script th:src="@{/vue/vue.min.js}" src="../../static/vue/vue.min.js" type="text/javascript" charset="utf-8"></script>
     <script th:src="@{/bootstrap4/assets/metismenu/metisMenu.js}" src="../../static/bootstrap4/assets/metismenu/metisMenu.js"></script>
-    <script th:src="@{/vue/vue-router.min.js}" src="../../static/vue/vue-router.min.js"></script>
     <script>
         $(function(){
             $('#menu').metisMenu();
-        })
+            checkForm();
+
+        });
+
+        // 表单输入框数据校验
+        function checkForm() {
+            $(".needs-validation").submit(function (event) {
+                const f = $(this)  //获取当前对象
+                if (f[0].checkValidity() === false) {
+                    event.preventDefault()
+                    event.stopPropagation()
+                }
+                f.addClass("was-validated")
+            })
+        }
+
+
     </script>
 </footer>
 
@@ -331,12 +368,12 @@
         <div class="collapse navbar-collapse" id="navbarSupportedContent2">
             <ul class="nav navbar-nav navbar-right">
                 <li class="nav-item active">
-                    <a class="nav-link" href="/notebook/login">
+                    <a class="nav-link" href="/login">
                         登录
                     </a>
                 </li>
                 <li class="nav-item active">
-                    <a class="nav-link" href="/notebook/register">
+                    <a class="nav-link" href="/register">
                         注册
                     </a>
                 </li>

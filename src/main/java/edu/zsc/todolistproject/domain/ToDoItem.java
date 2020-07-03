@@ -2,8 +2,10 @@ package edu.zsc.todolistproject.domain;
 
 import lombok.Data;
 
+import java.io.Serializable;
+
 @Data
-public class ToDoItem {
+public class ToDoItem implements Serializable {
     private Integer id;
     private String description;
     private boolean isDone;

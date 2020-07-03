@@ -7,6 +7,13 @@ $(".card_title_in_modal").on("change", "input", function () {
         data: {
             "title": card_title,
             "id": card_id,
+        },
+        "success": function (card) {
+            $("#board_canvas").find("#card"+card.id).text(card.title)
+        },
+        "error": function (xhr, status, error) {
+            layer.msg(xhr.responseText, {time: 3000, icon: 5, shift: 6}, function () {
+            });
         }
     })
 })
@@ -89,7 +96,7 @@ $(document).on("click",".layui-layer-btn",function (e) {
         timeout: 1000000,
         success:function (res) {
             console.log(res)
-            layer.msg("更新成功", {time:1000, icon:5, shift:6}, function () {
+            layer.msg("更新成功", {time:1000, icon:1, shift:6}, function () {
 
                 $("#attachment"+id).find(".attachment-thumbnail-name").text(res.filename)
             });
@@ -103,36 +110,24 @@ $(document).on("click",".layui-layer-btn",function (e) {
 })
 
 $(document).on("click",".comment_edit",function (e) {
-    var content = $(e.target).closest(".comment").find(".comment_contents").text();
-    var replace_html = "<textarea class='comment_contents sub_comment z-depth-1'>"+content+"</textarea>" +
-        "<div class='comment_send comment_edit_btn'>Update</div>";
-    $(e.target).closest(".comment").find(".comment_contents").replaceWith(replace_html);
+    var display = $(e.target).closest(".comment").find(".comment_edit_btn").css("display")
+    if(display!="none")
+    {
+        var content = $(e.target).closest(".comment").find(".comment_contents").html();
+        var replace_html = "<div class='comment_contents z-depth-1'>"+content+"</div>";
+        $(e.target).closest(".comment").find(".comment_contents").replaceWith(replace_html);
+
+        $(e.target).closest(".comment").find(".comment_edit_btn").attr("style", "display:none");
+    }else {
+        var content = $(e.target).closest(".comment").find(".comment_contents").html();
+        var replace_html = "<textarea class='comment_contents sub_comment z-depth-1'>"+content+"</textarea>";
+        $(e.target).closest(".comment").find(".comment_contents").replaceWith(replace_html);
+        $(e.target).closest(".comment").find(".comment_edit_btn").attr("style", "display:block");
+
+    }
 })
 
-$(document).on("click",".comment_edit_btn",function (e) {
-    var id = $(e.target).closest(".comment").attr("id").slice(7)
-    var content = $(e.target).closest(".comment").find(".comment_contents").val();
-    $.ajax({
-        "type":"PUT",
-        "url":"/comment/edit",
-        "contentType": "application/json;charset=utf-8",
-        "data":JSON.stringify({
-            "id":id,
-            "content":content
-        }),
-        "success":function (res) {
-            if (res == 1) {
-                var replace_html = "<div class='comment_contents z-depth-1'>"+content+"</div>"
-                $(e.target).closest(".comment").find(".comment_contents").replaceWith(replace_html);
-                $(e.target).remove();
-            }else {
-                layer.msg("更新失败，未知错误", {time:1000, icon:5, shift:6}, function () {
 
-                });
-            }
-        }
-    })
-})
 $(document).on("click",".comment_delete",function (e) {
     var id = $(e.target).closest(".comment").attr("id").slice(7)
     layer.confirm("确认删除该评论？",  {icon: 3, title:'删除评论'}, function(cindex){
@@ -140,20 +135,59 @@ $(document).on("click",".comment_delete",function (e) {
         $.ajax({
             "type":"DELETE",
             "url":"/comment/delete/"+id,
-            "success":function (res) {
-                if (res == 1) {
+            "contentType": "application/json;charset=utf-8",
+            "success": function (res) {
+                layer.msg(res, {time: 3000, icon: 1, shift: 6}, function () {
                     $(e.target).closest(".comment").remove();
-                }else {
-                    layer.msg("更新失败，未知错误", {time:1000, icon:5, shift:6}, function () {
-
-                    });
-                }
+                });
+            },
+            "error": function (xhr, status, error) {
+                layer.msg(xhr.responseText, {time: 3000, icon: 5, shift: 6}, function () {
+                });
             }
         })
     }, function(cindex){
         layer.close(cindex);
     });
 
+})
+
+//checklist刪除
+$(document).on("click",".checklist_del",function (e) {
+    var id = $(e.target).attr("id").slice(9);
+    layer.confirm("确认删除该清單？",  {icon: 3, title:'删除清單'}, function(cindex){
+        layer.close(cindex);
+        $.ajax({
+            "type":"DELETE",
+            "url":"/checklist/delete/"+id,
+            "contentType": "application/json;charset=utf-8",
+            "success": function (res) {
+                layer.msg(res, {time: 3000, icon: 5, shift: 6}, function () {
+                    $(e.target).closest(".checklistDiv").remove();
+                });
+            },
+            "error": function (xhr, status, error) {
+                layer.msg(xhr.responseText, {time: 3000, icon: 5, shift: 6}, function () {
+                });
+            }
+        })
+    }, function(cindex){
+        layer.close(cindex);
+    });
+})
+
+/**
+ * 回復功能
+ */
+$(document).on("click",".comment_huifu",function (e) {
+    var comment_ele = $(e.target).closest(".comment");
+    var user_reply_to = $(comment_ele).find(".commenter").text();
+    var main = $("#main_comment")
+    //連接到個人信息界面,emmmmm
+    main.val("reply to <a href='#'>"+user_reply_to+"</a>:");
+    // main.val("reply to "+user_reply_to+":");
+    $("#main_comment").focus();
+    $("#main_comment").replaceWith(main);
 })
 
 $(document).on("click","a.js-open-viewer",function (e) {

@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="UTF-8"?>
+        <!DOCTYPE mapper
+                PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+                "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="edu.zsc.todolistproject.mapper.BoardMapper2">
+
+    <select id="get" resultMap="teamResultMap">
+           select t.*,tp.name
+           from team as t,team_type as tp
+           where t.type_id=tp.id and t.id=#{id}
+     </select>
+
+
+    <resultMap id="teamResultMap" type="edu.zsc.todolistproject.domain.Team">
+        <id property="id" column="id"/>
+        <result property="title" column="title"/>
+        <result property="typeId" column="type_id"/>
+        <result property="description" column="description"/>
+        <association property="teamType" javaType="edu.zsc.todolistproject.domain.TeamType">
+            <id property="id" column="id"/>
+            <result property="name" column="name"/>
+        </association>
+    </resultMap>
+
+    <insert id="insertB" useGeneratedKeys="true" keyProperty="id" parameterType="edu.zsc.todolistproject.domain.Board">
+      insert into board(title,visibility,user_id,submit_date<include refid="boardField"/>)
+       values (#{title},#{visibility},#{userId},#{submitDate}<include refid="boardValue"/>)
+    </insert>
+    <sql id="boardField">
+        <trim prefix="," suffixOverrides=",">
+            <if test="teamId!=null and teamId!=''">
+                team_id
+            </if>
+        </trim>
+    </sql>
+
+    <sql id="boardValue">
+        <trim prefix="," suffixOverrides=",">
+          <if test="teamId!=null and teamId!=''">
+              #{teamId}
+          </if>
+      </trim>
+    </sql>
+
+
+</mapper>

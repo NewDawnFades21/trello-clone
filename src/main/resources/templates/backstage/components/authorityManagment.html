@@ -1,0 +1,330 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head th:replace="backstage/components/fragment :: componentHeader"></head>
+
+<body>
+<div class="card">
+    <div class="card-body">
+        <!--操作按钮-->
+        <div style="padding: 8px;">
+            <button type="button" class="btn btn-primary" onclick="Refresh()">刷新</button>
+            <button type="button" class="btn btn-success"  data-toggle="modal" data-target="#addModal">添加</button>
+        </div>
+    </div>
+</div>
+
+<!--权限表-->
+<table id="authorityTable" lay-filter="table"></table>
+
+<!--弹窗之 编辑权限信息 -->
+<div class="modal fade" id="editModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title"><img th:src="@{/img/edit.png}" style="width: 45px;height: 45px;">&nbsp;编辑权限信息</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <!--                主体内容-->
+                <form action="" id="editForm" novalidate="novalidate">
+                    <div class="form-row align-items-center">
+                        <!--        图片-->
+                        <div class="col-sm-12 my-1">
+                            <img id="editPicture" th:src="@{/img/authority.png}" class="rounded mx-auto d-block" alt="..."style="width: 100px;height: 100px;">
+                        </div>
+                        <!--                    权限id/名称-->
+                        <div class="col-sm-12 my-1">
+                            <div class="input-group">
+                                <label for="editId" class="my-1">  &nbsp;&nbsp;&nbsp;ID：</label>
+                                <input type="text" class="form-control" id="editId" placeholder="ID" disabled="disabled">
+                            </div>
+                        </div>
+                        <div class="col-sm-12 my-1">
+                            <div class="input-group">
+                                <label for="editAuthority" class="my-1">权限：</label>
+                                <input type="text" class="form-control" id="editAuthority" placeholder="权限名" required="required">
+                                <div class="invalid-feedback" style="text-align: center">权限名不能为空~</div>
+                            </div>
+                        </div>
+
+                    </div>
+                </form>
+                <!--                //主题内容-->
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-outline-primary" onclick="editSubmit()" id="editSubmit"><img th:src="@{/img/submit.png}" class="icoImg">&nbsp;确定</button>
+                <button type="button" class="btn btn-outline-secondary" data-dismiss="modal"><img th:src="@{/img/cancel.png}" class="icoImg">&nbsp;取消</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!--弹窗之删除权限信息-->
+<div class="modal fade" id="deleteModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="exampleModalCenterTitle">删除确定</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <div style="margin:auto auto;">
+                    <input type="hidden" id="deleteId">
+                    <img th:src="@{/img/tip.png}" style="height: 25px;width: 25px;">
+                    <label>确定要删除吗？</label>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-primary" data-dismiss="modal"id="deleteSubmit" onclick="remove()">确定</button>
+                <button type="button" class="btn btn-secondary" data-dismiss="modal">取消</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!--弹窗之 添加权限信息 -->
+<div class="modal fade" id="addModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title"><img th:src="@{/img/add.png}" style="width: 45px;height: 45px;">&nbsp;添加权限信息</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <!--                主体内容-->
+                <form action="" id="addForm" novalidate="novalidate">
+                    <div class="form-row align-items-center">
+                        <!--        图片-->
+                        <div class="col-sm-12 my-1">
+                            <img id="addPicture" th:src="@{/img/authority.png}" class="rounded mx-auto d-block" alt="..."style="width: 100px;height: 100px;">
+                        </div>
+                        <!--                    权限id/名称-->
+                        <div class="col-sm-12 my-1">
+                            <div class="input-group">
+                                <label for="addId" class="my-1">  &nbsp;&nbsp;&nbsp;ID：</label>
+                                <input type="text" class="form-control" id="addId" placeholder="自动生成ID" disabled="disabled">
+                            </div>
+                        </div>
+                        <div class="col-sm-12 my-1">
+                            <div class="input-group">
+                                <label for="addAuthority" class="my-1">权限：</label>
+                                <input type="text" class="form-control" id="addAuthority" placeholder="权限名" required="required">
+                                <div class="invalid-feedback" style="text-align: center">权限名不能为空~</div>
+                            </div>
+                        </div>
+
+                    </div>
+                </form>
+                <!--                //主题内容-->
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-outline-primary" onclick="addSubmit()" id="addSubmit"><img th:src="@{/img/submit.png}" class="icoImg">&nbsp;确定</button>
+                <button type="button" class="btn btn-outline-secondary" data-dismiss="modal"><img th:src="@{/img/cancel.png}" class="icoImg">&nbsp;取消</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!--引入js文件-->
+<footer  th:replace="backstage/components/fragment :: componentFooter"></footer>
+
+<script>
+    //将返回的json数据调整为表格所需的数据格式, bootstrap table渲染数据格式{total:xx,rows:[]}
+    // res为服务器返回的数据
+    function responseHandler(res) {
+        console.log(res);
+        var datas=[];
+        datas.push({total:res.data.total,rows:res.data.list});
+        return datas[0];
+    }
+
+    //动态生成操作区域的的按钮
+    // row.id为每行数据的主键
+    function opFormatter(value, row, index) {
+        var actions=[];
+        actions.push('<a class="btn btn-primary btn-sm" href="javascript:void(0)" data-toggle="modal" data-target="#editModal" onclick="edit(\''+row.id+'\')"><i class="fa fa-edit"></i> 编辑</a> ');
+        actions.push('<a class="btn btn-warning btn-sm" href="javascript:void(0)" data-toggle="modal" data-target="#deleteModal"  onclick="deleteId(\''+row.id+'\')"><i class="fa fa-remove"></i> 删除</a> ');
+        return actions.join('');
+    }
+
+    //定义表格列与json数据字段的对应关系
+    var columns = [
+        {
+            checkbox:true
+        }, {
+            title:"序号",
+            formatter:function (value,row,index) {
+                return index+1;
+            }
+        }, {
+            field:"authority",
+            title:"权限名",
+            sortables:true
+        },{
+        title:"操作",
+        align:"center",
+        formatter:opFormatter
+        }
+        ];
+
+    //和后台交互的查询参数对象
+    function queryParams(params) {
+        var params = {
+            pageSize: params.limit,                         //页面大小
+            pageNum: (params.offset / params.limit) + 1,   //页码
+            orderColumn: params.sort,        //排序列名
+            sortOrder: params.order    //排序命令（desc，asc）
+        };
+        params['keyword'] = "test";  // 传入查询分页中的关键词或者查询对象
+        console.log(params);
+        return params;
+    }
+
+    //获取table对象
+    var table = $('#authorityTable');
+    function onloadTable(){
+        var prefix = "";
+        //定义表格的相关属性
+        var options = {
+            //  locale: $('#locale').val(),
+            height: 500,    //表格高度
+            pagination: true,  // 启动分页
+            sortable: true,   //启动排序
+            pageList: "[5,10, 20, 50, All]",  //每页显示的数量
+            pageSize: 10,    //默认每页的记录数
+            striped: true,   //间隔显示颜色
+            url: prefix+"/backstage/authority/authorityAll",
+            // methods:get ,
+            responseHandler: responseHandler,  //处理服务器返回的数据格式
+            sidePagination: 'server',  //服务器分页则修改为server
+            clickToSelect: true,     //单击行进行选择
+           // multipleSelectRow: true,   //允许多选
+            pageNumber: 1,            //默认页面为第一页
+            queryParams: queryParams,  //与服务器交互的查询参数
+            theadClasses: 'thead-light', //设置表头样式，thead-light,thead-dark,''
+            columns: columns           //设置每列的字段内容
+        }
+        table.bootstrapTable('destroy').bootstrapTable(options);
+        //$('#table').init(options);//初始化表格
+    }
+
+    $(function () {
+        onloadTable();
+    });
+
+    //刷新
+    function Refresh(){
+        onloadTable();
+    }
+
+    //编辑按钮
+    function edit(id) {
+        $.ajax({
+            type:'get',
+            url:'/backstage/authority/viewAuthorityById/'+id,
+            contentType:'application/json',
+            processData:false,
+            success:function (res) {
+                  console.log(res.data);
+                  var authority=res.data;
+                  $("#editId").val(authority.id);
+                  $("#editAuthority").val(authority.authority);
+            }
+        });
+    }
+
+    //提交编辑权限
+    function editSubmit() {
+        var authority=$("#editAuthority").val();
+        if($("#editForm")[0].checkValidity()===false){
+            $("#editForm").addClass("was-validated");
+        } else{
+            $("#editModal").modal("hide");
+            var authorityData={
+                id:$("#editId").val().toString(),
+                authority:authority
+            }
+            console.log($("#editId").val()+$("#editAuthority").val()+"编辑信息："+authorityData);
+            $.ajax({
+                type:'post',
+                url:'/backstage/authority/editAuthority',
+                contentType:'application/json',
+                data:JSON.stringify(authorityData),
+                processData:false,
+                success:function (res) {
+                    var editCount=res.data;
+                    console.log("编辑是否成功："+res.data);
+                    if(editCount>0){
+                        toastr.success("修改成功");
+                        onloadTable();
+                    }else{
+                        toastr.warning("修改失败");
+                    }
+                }
+            });
+        }
+    }
+
+    //删除权限
+    function deleteId(id) {
+        $("#deleteId").val(id);
+    }
+    function remove() {
+       var id=$("#deleteId").val();
+        $.ajax({
+            type:'get',
+            url:'/backstage/authority/deleteAuthorityById/'+id,
+            contentType:'application/json',
+            processData:false,
+            success:function (res) {
+                var deleteCount=res.data;
+                console.log("删除条数："+deleteCount);
+                if(deleteCount>0){
+                    toastr.success("删除成功");
+                    onloadTable();
+                }else {
+                    toastr.warning("删除失败");
+                }
+            }
+        });
+    }
+
+   //添加权限
+    function addSubmit() {
+        var authority=$("#addAuthority").val();
+        if($("#addForm")[0].checkValidity()===false){
+            $("#addForm").addClass("was-validated");
+        } else{
+            $("#addModal").modal("hide");
+            var authorityData={
+                authority:authority
+            }
+            console.log("添加权限信息："+authorityData);
+            $.ajax({
+                type:'post',
+                url:'/backstage/authority/addAuthority',
+                contentType:'application/json',
+                data:JSON.stringify(authorityData),
+                processData:false,
+                success:function (res) {
+                    var editCount=res.data;
+                    console.log("添加是否成功："+res.data);
+                    if(editCount>0){
+                        toastr.success("添加成功");
+                        onloadTable();
+                    }else{
+                        toastr.warning("添加失败");
+                    }
+                }
+            });
+        }
+    }
+</script>
+</body>
+</html>

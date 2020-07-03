@@ -2,6 +2,7 @@ package edu.zsc.todolistproject.controller;
 
 import edu.zsc.todolistproject.domain.Attachment;
 import edu.zsc.todolistproject.mapper.AttachmentMapper;
+import edu.zsc.todolistproject.service.AttachmentService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -24,7 +25,7 @@ public class UploadController {
     private static String UPLOAD_DIR = "C:\\uploads\\";
 
     @Autowired
-    private AttachmentMapper attatchmentMapper;
+    private AttachmentService attachmentService;
 
     @PostMapping("/uploadMultiFiles")
     public ResponseEntity<?> multiUploadFileModel(MultipartFile file, Attachment attachment) {
@@ -34,7 +35,7 @@ public class UploadController {
             attachment.setFilename(filename);
             attachment.setPath(uploadFilePath);
             attachment.setCreateTime(new Date());
-            attatchmentMapper.addAttachment(attachment);
+            attachmentService.addAttachment(attachment);
             byte[] bytes = file.getBytes();
             Path path = Paths.get(uploadFilePath);
             Files.write(path, bytes);

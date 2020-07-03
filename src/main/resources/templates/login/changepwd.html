@@ -1,0 +1,209 @@
+﻿<!doctype html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>找回密码界面</title>
+
+    <link type="text/css" href="../../static/css/findpwd.css" rel="stylesheet" th:href="@{/css/findpwd.css}"/>
+    <link rel="stylesheet" th:href="@{/bootstrap4/css/bootstrap.min.css}"
+          href="../../static/bootstrap4/css/bootstrap.min.css">
+    <link rel="stylesheet" th:href="@{/bootstrap4/assets/css/toastr.min.css}"
+          href="../../static/bootstrap4/assets/css/toastr.min.css">
+    <link rel="stylesheet" th:href="@{/bootstrap4/assets/fonts/font-awesome.min.css}"
+          href="../../static/bootstrap4/assets/fonts/font-awesome.min.css">
+    <link rel="stylesheet" th:href="@{/site/css/mysite.css}" href="../../static/site/css/mysite.css">
+    <style>
+        input {
+            padding: 5px;
+        }
+
+        input.error {
+            border: 1px solid #99182c;
+        }
+
+        span.arrow {
+            height: 17px;
+            background: url('http://i45.tinypic.com/f9ifz6.png') no-repeat center left;
+            top: 4px;
+        }
+
+        label.error {
+            border-top: 1px solid #99182c;
+            border-bottom: 1px solid #99182c;
+            border-right: 1px solid #99182c;
+            color: black;
+            padding: 1px 5px 1px 5px;
+            font-size: small;
+
+        }
+    </style>
+</head>
+<!--//导航栏-->
+<div th:insert="fragments/layout2::header2">
+
+</div>
+
+<!-- 登录 -->
+<div class="register">
+    <img class="avatar" src="../../static/img/5.JPG" th:src="@{/img/4.jpg}">
+    <form id="ajaxForm" class="login-wrap" method="post" th:action="@{/user/changePwd}">
+        <ul>
+            <li>
+                <label for="old_pass">原密码</label>
+                <input type="text" name="oldPassword" class="name" id="old_pass">
+            </li>
+            <li>
+                <label for="new_pass">新密码 :</label>
+                <input type="password" name="password" class="pass" id="new_pass">
+            </li>
+            <li>
+                <label for="confirm_new_pass">确认密码 :</label>
+                <input type="password" name="confirmPassword" class="repass" id="confirm_new_pass">
+            </li>
+            <li>
+                <label></label>
+                <input type="submit" class="btn btn-primary" value="提交">
+            </li>
+            <small>[[#{login.findpwd}]]</small><a th:href="/user/findPwd"  class="signup" style="margin-top: 10px">&nbsp;[[#{login.findpwd2}]]</a>
+        </ul>
+    </form>
+</div>
+
+<script src="/webjars/jquery/3.5.0/jquery.min.js"></script>
+<script th:src="@{/jquery-validation/jquery.validate.min.js}"></script>
+<script type="text/javascript" th:src="@{/layer/layer.js}"></script>
+<!--代码雨区域-->
+<canvas id="canvas" style="background:#000"></canvas>
+<script>
+    $(document).ready(function () {
+        //代码雨
+        var canvas = document.getElementById("canvas");
+        var context = canvas.getContext("2d");
+// 浏览器宽高
+        var W = window.screen.availWidth;
+        var H = window.screen.availHeight;
+        canvas.width = W;
+        canvas.height = H;
+        var fontSize = 100;
+        var colunms = Math.floor(W / fontSize);
+// 坐标
+        var coordinate = [];
+        for (var i = 0; i < colunms; i++) {
+            coordinate.push(0);
+        }
+        var str = "javascript html5 canvas";
+
+        function draw() {
+// 背景色
+            context.fillStyle = "rgba(0,0,0,0.098)";
+            context.fillRect(0, 0, W, H);
+            context.font = "800 " + fontSize + "px  宋体";
+// 字体颜色
+            context.fillStyle = "#01fef5";
+            for (var i = 0; i < colunms; i++) {
+                var index = Math.floor(Math.random() * str.length);
+                var x = i * fontSize;
+                var y = coordinate[i] * fontSize;
+                context.fillText(str[index], x, y);
+                if (y >= canvas.height && Math.random() > 0.98) {
+                    coordinate[i] = 0;
+                }
+                coordinate[i]++;
+            }
+        }
+
+        function randColor() {
+            var r = Math.floor(Math.random() * 256);
+            var g = Math.floor(Math.random() * 256);
+            var b = Math.floor(Math.random() * 256);
+            return "rgb(" + r + "," + g + "," + b + ")";
+        }
+
+        draw();
+        setInterval(draw, 50);
+
+        //表单验证
+        $("#ajaxForm").validate({
+            rules: {
+                oldPassword: {
+                    required: true,
+                    minlength: 6,
+                    maxlength: 20,
+                    remote: {
+                        url: "/user/matchOldPassword",
+                        type: "post",
+                        data: {
+                            oldPassword: function () {
+                                return $("#old_pass").val();
+                            }
+                        }
+                    }
+                },
+                password: {
+                    required: true,
+                    minlength: 6,
+                    maxlength: 20
+                },
+                confirmPassword: {
+                    required: true,
+                    equalTo: "#new_pass",
+                    minlength: 6,
+                    maxlength: 256
+                }
+            },
+
+            messages: {
+                oldPassword: {
+                    required: "required",
+                    minlength: "密码长度至少6位",
+                    maxlength: "密码长度至多20位",
+                    remote: "旧密码错误"
+                },
+                password: {
+                    required: "required",
+                    maxlength: "密码长度至多20位",
+                    minlength: "密码长度至少6位"
+                },
+                confirmPassword: {
+                    required: "required",
+                    equalTo: "确认密码应与新密码相同"
+                }
+            },
+            wrapper: 'span',
+            errorPlacement: function (error, element) {
+                error.css({'padding-left': '10px', 'margin-right': '20px', 'padding-bottom': '2px'});
+                error.addClass("arrow");
+                error.insertAfter(element);
+            },
+        });
+
+        $("input[type='submit']").click(function (e) {
+            e.preventDefault();
+            var data =  {
+                    "password": $("#new_pass").val()
+                };
+            $.ajax({
+                type: "PUT",
+                url: "/user/changePwd",
+                data:JSON.stringify(data),
+                // prevent jQuery from automatically transforming the data into a query string
+                processData: false,
+                contentType: "application/json; charset=UTF-8",
+                cache: false,
+                timeout: 1000000,
+                success: function (data, textStatus, jqXHR) {
+                    layer.msg(data, {time: 2000, icon: 5, shift: 6}, function () {
+                        //    修改成功后跳转到某页面
+                    });
+                },
+                error: function (data, jqXHR, textStatus, errorThrown) {
+                    layer.msg(data, {time: 2000, icon: 5, shift: 6}, function () {
+
+                    });
+                }
+            })
+        })
+    })
+</script>
+</body>
+</html>
